@@ -1,0 +1,39 @@
+package sim
+
+type Sim struct {
+	UI         UIState
+	Player     Player
+	Tiles      []Tile
+	Characters []Character
+}
+
+type Character struct {
+	Name          string
+	WorldPosition WorldPosition
+	Path          []TilePosition
+}
+
+type UIState struct {
+	EditMode bool
+	Pause    bool
+}
+
+type Tile struct {
+	Type     TileType
+	Position TilePosition
+	MoveCost MoveCost
+}
+
+type WorldPosition struct {
+	X float32
+	Y float32
+}
+
+type TilePosition struct {
+	X int
+	Y int
+}
+
+type Player struct {
+	WorldPosition WorldPosition
+}
