@@ -38,16 +38,12 @@ func DrawMap(renderer *Renderer, tiles []sim.Tile) {
 		if tileWorldX >= leftBound && tileWorldX <= rightBound &&
 			tileWorldY >= topBound && tileWorldY <= bottomBound {
 
-			color := ColorBackground
-			if tiles[i].Type == sim.TileTypeWall {
-				color = ColorWall
-			}
 			rl.DrawRectangle(
 				int32(tiles[i].Position.X*sim.TILE_SIZE),
 				int32(tiles[i].Position.Y*sim.TILE_SIZE),
 				sim.TILE_SIZE,
 				sim.TILE_SIZE,
-				color,
+				TileTypeColors[tiles[i].Type],
 			)
 		}
 	}

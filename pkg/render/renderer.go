@@ -52,6 +52,10 @@ func DrawUI(ui sim.UIState) {
 	if ui.EditMode {
 		// Draw EditMode indicator in top-left corner
 		rl.DrawText("EDIT MODE", 10, 10, 20, ColorEditMode)
+
+		// Draw current EditorTileType below EditMode indicator
+		tileTypeText := "Tile Type: " + ui.EditorTileType.String()
+		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
 	}
 }
 

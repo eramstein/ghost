@@ -14,8 +14,9 @@ type Character struct {
 }
 
 type UIState struct {
-	EditMode bool
-	Pause    bool
+	EditMode       bool
+	Pause          bool
+	EditorTileType TileType
 }
 
 type Tile struct {

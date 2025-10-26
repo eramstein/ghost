@@ -9,6 +9,21 @@ const (
 	TileTypeDirt
 )
 
+func (tt TileType) String() string {
+	switch tt {
+	case TileTypeEmpty:
+		return "Empty"
+	case TileTypeWall:
+		return "Wall"
+	case TileTypeFloor:
+		return "Floor"
+	case TileTypeDirt:
+		return "Dirt"
+	default:
+		return "Unknown"
+	}
+}
+
 type MoveCost float64
 
 const (
