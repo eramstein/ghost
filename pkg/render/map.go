@@ -45,6 +45,15 @@ func DrawMap(renderer *Renderer, tiles []sim.Tile) {
 				sim.TILE_SIZE,
 				TileTypeColors[tiles[i].Type],
 			)
+
+			// // Draw tile coordinates as text
+			// coordText := fmt.Sprintf("%d,%d", tiles[i].Position.X, tiles[i].Position.Y)
+			// rl.DrawText(coordText,
+			// 	int32(tiles[i].Position.X*sim.TILE_SIZE)+2,
+			// 	int32(tiles[i].Position.Y*sim.TILE_SIZE)+2,
+			// 	8,
+			// 	rl.White)
+
 		}
 	}
 

@@ -157,7 +157,6 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 				existingNode.G = newG
 				existingNode.H = heuristic(existingNode, endNode)
 				existingNode.F = existingNode.G + existingNode.H
-				// Note: We don't need to re-heapify since we're only updating values
 			}
 		}
 	}

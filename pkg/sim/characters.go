@@ -7,17 +7,59 @@ func InitCharacters() []Character {
 		{
 			Name: "Henry",
 			WorldPosition: WorldPosition{
-				X: 10 * TILE_SIZE,
+				X: 10*TILE_SIZE + TILE_SIZE/2,
+				Y: 10*TILE_SIZE + TILE_SIZE/2,
+			},
+		},
+		{
+			Name: "Emma",
+			WorldPosition: WorldPosition{
+				X: 11 * TILE_SIZE,
+				Y: 13 * TILE_SIZE,
+			},
+		},
+		{
+			Name: "Lise",
+			WorldPosition: WorldPosition{
+				X: 11 * TILE_SIZE,
+				Y: 14 * TILE_SIZE,
+			},
+		},
+		{
+			Name: "Ousmane",
+			WorldPosition: WorldPosition{
+				X: 12 * TILE_SIZE,
 				Y: 10 * TILE_SIZE,
 			},
 		},
-		// {
-		// 	Name: "Ella",
-		// 	WorldPosition: WorldPosition{
-		// 		X: 11 * TILE_SIZE,
-		// 		Y: 10 * TILE_SIZE,
-		// 	},
-		// },
+		{
+			Name: "Molly",
+			WorldPosition: WorldPosition{
+				X: 12 * TILE_SIZE,
+				Y: 12 * TILE_SIZE,
+			},
+		},
+		{
+			Name: "Robert",
+			WorldPosition: WorldPosition{
+				X: 20 * TILE_SIZE,
+				Y: 14 * TILE_SIZE,
+			},
+		},
+		{
+			Name: "Didier",
+			WorldPosition: WorldPosition{
+				X: 20 * TILE_SIZE,
+				Y: 10 * TILE_SIZE,
+			},
+		},
+		{
+			Name: "Morgane",
+			WorldPosition: WorldPosition{
+				X: 20 * TILE_SIZE,
+				Y: 12 * TILE_SIZE,
+			},
+		},
 	}
 }
 

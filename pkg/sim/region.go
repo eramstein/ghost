@@ -3,6 +3,7 @@ package sim
 import (
 	"encoding/gob"
 	"fmt"
+	"math/rand"
 	"os"
 )
 
@@ -39,4 +40,18 @@ func InitRegion() []Tile {
 
 func (s *Sim) GetTileAt(position TilePosition) *Tile {
 	return &s.Tiles[position.Y*REGION_SIZE+position.X]
+}
+
+func (s *Sim) GetRandomEmptyTile() *Tile {
+	var emptyTiles []*Tile
+	for i := range s.Tiles {
+		if s.Tiles[i].Type != TileTypeWall {
+			emptyTiles = append(emptyTiles, &s.Tiles[i])
+		}
+	}
+	if len(emptyTiles) == 0 {
+		return nil
+	}
+	randomIndex := rand.Intn(len(emptyTiles))
+	return emptyTiles[randomIndex]
 }

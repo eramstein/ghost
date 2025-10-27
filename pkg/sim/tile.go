@@ -37,5 +37,9 @@ func (t *Tile) UpdateType(newType TileType) {
 	switch newType {
 	case TileTypeWall:
 		t.MoveCost = ImpassableCost
+	case TileTypeEmpty, TileTypeFloor, TileTypeDirt:
+		t.MoveCost = DefaultMoveCost
+	default:
+		t.MoveCost = DefaultMoveCost
 	}
 }
