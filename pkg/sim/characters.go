@@ -44,8 +44,14 @@ func MakeCharacter(name string, worldPosition WorldPosition) Character {
 		Name:          name,
 		WorldPosition: worldPosition,
 		Needs: Needs{
-			Hunger: 100,
+			Hunger: 0,
 		},
+	}
+}
+
+func (sim *Sim) UpdateCharacters() {
+	for i := range sim.Characters {
+		sim.Characters[i].Needs.Hunger += 1
 	}
 }
 

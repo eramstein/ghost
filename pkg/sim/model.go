@@ -1,10 +1,15 @@
 package sim
 
 type Sim struct {
-	UI         UIState
-	Player     Player
-	Tiles      []Tile
-	Characters []Character
+	UI          UIState
+	Player      Player
+	Tiles       []Tile
+	Characters  []Character
+	ItemManager *ItemManager
+}
+
+type Item struct {
+	Type ItemType
 }
 
 type Character struct {
