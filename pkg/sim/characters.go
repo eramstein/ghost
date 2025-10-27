@@ -4,61 +4,47 @@ const CHARACTER_SPEED = 100
 
 func InitCharacters() []Character {
 	return []Character{
-		{
-			Name: "Henry",
-			WorldPosition: WorldPosition{
-				X: 10*TILE_SIZE + TILE_SIZE/2,
-				Y: 10*TILE_SIZE + TILE_SIZE/2,
-			},
-		},
-		{
-			Name: "Emma",
-			WorldPosition: WorldPosition{
-				X: 11 * TILE_SIZE,
-				Y: 13 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Lise",
-			WorldPosition: WorldPosition{
-				X: 11 * TILE_SIZE,
-				Y: 14 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Ousmane",
-			WorldPosition: WorldPosition{
-				X: 12 * TILE_SIZE,
-				Y: 10 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Molly",
-			WorldPosition: WorldPosition{
-				X: 12 * TILE_SIZE,
-				Y: 12 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Robert",
-			WorldPosition: WorldPosition{
-				X: 20 * TILE_SIZE,
-				Y: 14 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Didier",
-			WorldPosition: WorldPosition{
-				X: 20 * TILE_SIZE,
-				Y: 10 * TILE_SIZE,
-			},
-		},
-		{
-			Name: "Morgane",
-			WorldPosition: WorldPosition{
-				X: 20 * TILE_SIZE,
-				Y: 12 * TILE_SIZE,
-			},
+		MakeCharacter("Henry", WorldPosition{
+			X: 10*TILE_SIZE + TILE_SIZE/2,
+			Y: 10*TILE_SIZE + TILE_SIZE/2,
+		}),
+		MakeCharacter("Emma", WorldPosition{
+			X: 11 * TILE_SIZE,
+			Y: 13 * TILE_SIZE,
+		}),
+		MakeCharacter("Lise", WorldPosition{
+			X: 11 * TILE_SIZE,
+			Y: 14 * TILE_SIZE,
+		}),
+		MakeCharacter("Ousmane", WorldPosition{
+			X: 12 * TILE_SIZE,
+			Y: 10 * TILE_SIZE,
+		}),
+		MakeCharacter("Molly", WorldPosition{
+			X: 12 * TILE_SIZE,
+			Y: 12 * TILE_SIZE,
+		}),
+		MakeCharacter("Robert", WorldPosition{
+			X: 20 * TILE_SIZE,
+			Y: 14 * TILE_SIZE,
+		}),
+		MakeCharacter("Didier", WorldPosition{
+			X: 20 * TILE_SIZE,
+			Y: 10 * TILE_SIZE,
+		}),
+		MakeCharacter("Morgane", WorldPosition{
+			X: 20 * TILE_SIZE,
+			Y: 12 * TILE_SIZE,
+		}),
+	}
+}
+
+func MakeCharacter(name string, worldPosition WorldPosition) Character {
+	return Character{
+		Name:          name,
+		WorldPosition: worldPosition,
+		Needs: Needs{
+			Hunger: 100,
 		},
 	}
 }

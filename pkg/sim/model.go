@@ -11,6 +11,7 @@ type Character struct {
 	Name          string
 	WorldPosition WorldPosition
 	Path          []TilePosition
+	Needs         Needs
 }
 
 type UIState struct {
@@ -37,4 +38,8 @@ type TilePosition struct {
 
 type Player struct {
 	WorldPosition WorldPosition
+}
+
+type Needs struct {
+	Hunger int
 }
