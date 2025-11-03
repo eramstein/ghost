@@ -9,7 +9,14 @@ type Sim struct {
 }
 
 type Item struct {
-	Type ItemType
+	Type     ItemType
+	Location ItemLocation
+}
+
+type ItemLocation struct {
+	LocationType ItemLocationType
+	TilePosition TilePosition
+	CharacterID  int
 }
 
 type Character struct {
@@ -29,6 +36,7 @@ type Tile struct {
 	Type     TileType
 	Position TilePosition
 	MoveCost MoveCost
+	Items    []ItemRef
 }
 
 type WorldPosition struct {

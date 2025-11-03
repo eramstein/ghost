@@ -38,7 +38,7 @@ func (im *ItemManager) SetCapacity(itemType ItemType, capacity int) {
 }
 
 // AddItem adds an item and returns the index where it was placed
-func (im *ItemManager) AddItem(itemType ItemType, item Item) (int, error) {
+func (im *ItemManager) AddItem(itemType ItemType, item Item, location ItemLocation) (int, error) {
 	freeSlots, exists := im.freeSlots[itemType]
 	if !exists {
 		return -1, fmt.Errorf("item type %d not initialized", itemType)
@@ -54,8 +54,9 @@ func (im *ItemManager) AddItem(itemType ItemType, item Item) (int, error) {
 	// Remove the slot from free list
 	im.freeSlots[itemType] = freeSlots[1:]
 
-	// Place the item
+	// Place the item in the slice
 	item.Type = itemType
+	item.Location = location
 	im.items[itemType][index] = item
 
 	return index, nil
@@ -129,8 +130,12 @@ func (im *ItemManager) GetUsedSlotCount(itemType ItemType) int {
 }
 
 // Item management convenience methods for Sim
-func (s *Sim) AddItem(itemType ItemType, item Item) (int, error) {
-	return s.ItemManager.AddItem(itemType, item)
+func (s *Sim) AddItem(itemType ItemType, item Item, location ItemLocation) {
+	index, _ := s.ItemManager.AddItem(itemType, item, location)
+	if location.LocationType == LocTile {
+		tile := s.GetTileAt(location.TilePosition)
+		tile.AddItem(ItemRef{Type: itemType, Index: index}, location.TilePosition)
+	}
 }
 func (s *Sim) RemoveItem(itemType ItemType, index int) error {
 	return s.ItemManager.RemoveItem(itemType, index)

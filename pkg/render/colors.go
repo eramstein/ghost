@@ -27,3 +27,7 @@ var TileTypeColors = map[sim.TileType]rl.Color{
 	sim.TileTypeFloor: ColorFloor,
 	sim.TileTypeDirt:  ColorDirt,
 }
+
+var ItemTypeColors = map[sim.ItemType]rl.Color{
+	sim.ItemTypeFood: ColorLife,
+}

@@ -24,7 +24,7 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	// Try to load quicksave first, fallback to InitSim if it fails
-	var simData sim.Sim
+	var simData *sim.Sim
 	loadedSim, err := utils.LoadSim("quicksave")
 	if err != nil {
 		fmt.Printf("No quicksave found or error loading: %v\n", err)
@@ -32,11 +32,11 @@ func main() {
 		simData = sim.InitSim()
 	} else {
 		fmt.Println("Loaded quicksave successfully!")
-		simData = *loadedSim
+		simData = loadedSim
 	}
 
-	renderer := render.NewRenderer(&simData, nil)
-	inputManager := input.NewManager(&simData, &renderer.Camera)
+	renderer := render.NewRenderer(simData, nil)
+	inputManager := input.NewManager(simData, &renderer.Camera)
 	renderer.Console = inputManager.GetConsole()
 	defer renderer.Close()
 
@@ -59,7 +59,7 @@ func main() {
 
 		// Draw
 		rl.BeginDrawing()
-		renderer.Render(&simData)
+		renderer.Render(simData)
 
 		// Draw white background for FPS
 		rl.DrawFPS(700, 10)

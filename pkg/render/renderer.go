@@ -32,7 +32,7 @@ func (r *Renderer) Render(simData *sim.Sim) {
 
 	rl.ClearBackground(ColorBackground)
 	rl.BeginMode2D(r.Camera)
-	DrawMap(r, simData.Tiles)
+	DrawMap(r, simData)
 	//DrawMapDebug(r, simData.Tiles, simData.Characters)
 	DrawPlayer(r, simData.Player)
 	DrawCharacters(r, simData.Characters)
