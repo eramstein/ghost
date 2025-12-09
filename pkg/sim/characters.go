@@ -1,66 +1,78 @@
 package sim
 
+import "gociv/pkg/config"
+
 const CHARACTER_SPEED = 100
 
-func InitCharacters() []Character {
-	return []Character{
-		MakeCharacter("Henry", WorldPosition{
-			X: 10*TILE_SIZE + TILE_SIZE/2,
-			Y: 10*TILE_SIZE + TILE_SIZE/2,
-		}),
-		MakeCharacter("Emma", WorldPosition{
-			X: 11 * TILE_SIZE,
-			Y: 13 * TILE_SIZE,
-		}),
-		MakeCharacter("Lise", WorldPosition{
-			X: 11 * TILE_SIZE,
-			Y: 14 * TILE_SIZE,
-		}),
-		MakeCharacter("Ousmane", WorldPosition{
-			X: 12 * TILE_SIZE,
-			Y: 10 * TILE_SIZE,
-		}),
-		MakeCharacter("Molly", WorldPosition{
-			X: 12 * TILE_SIZE,
-			Y: 12 * TILE_SIZE,
-		}),
-		MakeCharacter("Robert", WorldPosition{
-			X: 20 * TILE_SIZE,
-			Y: 14 * TILE_SIZE,
-		}),
-		MakeCharacter("Didier", WorldPosition{
-			X: 20 * TILE_SIZE,
-			Y: 10 * TILE_SIZE,
-		}),
-		MakeCharacter("Morgane", WorldPosition{
-			X: 20 * TILE_SIZE,
-			Y: 12 * TILE_SIZE,
-		}),
-	}
+func (sim *Sim) InitCharacters() {
+	sim.MakeCharacter("Henry", TilePosition{
+		X: 10,
+		Y: 10,
+	})
+	sim.MakeCharacter("Emma", TilePosition{
+		X: 11,
+		Y: 13,
+	})
+	sim.MakeCharacter("Lise", TilePosition{
+		X: 11,
+		Y: 14,
+	})
+	sim.MakeCharacter("Ousmane", TilePosition{
+		X: 12,
+		Y: 10,
+	})
+	sim.MakeCharacter("Molly", TilePosition{
+		X: 12,
+		Y: 12,
+	})
+	sim.MakeCharacter("Robert", TilePosition{
+		X: 20,
+		Y: 14,
+	})
+	sim.MakeCharacter("Didier", TilePosition{
+		X: 20,
+		Y: 10,
+	})
+	sim.MakeCharacter("Morgane", TilePosition{
+		X: 20,
+		Y: 12,
+	})
 }
 
-func MakeCharacter(name string, worldPosition WorldPosition) Character {
-	return Character{
-		Name:          name,
-		WorldPosition: worldPosition,
-		Needs: Needs{
-			Hunger: 0,
+func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
+	character := Character{
+		ID:           len(sim.Characters),
+		Name:         name,
+		TilePosition: pos,
+		WorldPosition: WorldPosition{
+			X: float32(pos.X*TILE_SIZE + TILE_SIZE/2),
+			Y: float32(pos.Y*TILE_SIZE + TILE_SIZE/2),
 		},
 	}
+	sim.Characters = append(sim.Characters, character)
+	sim.GetTileAt(pos).CharacterID = character.ID
 }
 
 func (sim *Sim) UpdateCharacters() {
 	for i := range sim.Characters {
-		sim.Characters[i].Needs.Hunger += 1
+		character := &sim.Characters[i]
+		character.UpdateNeeds()
+		sim.UpdateObjectives(character)
 	}
+}
+
+func (character *Character) UpdateNeeds() {
+	character.Needs.Food += config.NeedFoodTick
+	character.Needs.Water += config.NeedWaterTick
+	character.Needs.Sleep += config.NeedSleepTick
 }
 
 func (c *Character) Move(deltaTime float32) {
 	if len(c.Path) > 0 {
 		nextTile := c.Path[0]
 		nextTileWorldPosition := WorldPosition{
-			X: float32(nextTile.X)*TILE_SIZE + TILE_SIZE/2,
-			Y: float32(nextTile.Y)*TILE_SIZE + TILE_SIZE/2,
+			X: float32(nextTile.X),
+			Y: float32(nextTile.Y),
 		}
 		var direction WorldPosition
 		if nextTileWorldPosition.X-c.WorldPosition.X > 0 {

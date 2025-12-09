@@ -9,9 +9,12 @@ import (
 )
 
 type Manager struct {
-	sim     *sim.Sim
-	camera  *rl.Camera2D
-	console *Console
+	sim           *sim.Sim
+	camera        *rl.Camera2D
+	console       *Console
+	mousePosition rl.Vector2
+	leftPressed   bool
+	rightPressed  bool
 }
 
 // NewManager creates a new input manager

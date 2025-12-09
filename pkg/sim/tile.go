@@ -46,7 +46,7 @@ func (t *Tile) UpdateType(newType TileType) {
 
 func (t *Tile) AddItem(item ItemRef, position TilePosition) {
 	t.Items = append(t.Items, ItemRef{
-		Type:  item.Type,
-		Index: item.Index,
+		Type: item.Type,
+		ID:   item.ID,
 	})
 }

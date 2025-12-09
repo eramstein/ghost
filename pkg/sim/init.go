@@ -5,9 +5,9 @@ func InitSim() *Sim {
 		Player:      InitPlayer(),
 		Tiles:       InitRegion(),
 		UI:          UIState{EditMode: false},
-		Characters:  InitCharacters(),
 		ItemManager: NewItemManager(),
 	}
 	sim.InitItems()
+	sim.InitCharacters()
 	return &sim
 }

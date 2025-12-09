@@ -7,11 +7,22 @@ import (
 )
 
 func (m *Manager) HandleMouse(deltaTime float32) {
-	// Handle mouse clicks (only in EditMode)
-	if rl.IsMouseButtonDown(rl.MouseLeftButton) && m.sim.UI.EditMode {
+	// Update mouse state
+	m.mousePosition = rl.GetMousePosition()
+	m.leftPressed = rl.IsMouseButtonPressed(rl.MouseLeftButton)
+	m.rightPressed = rl.IsMouseButtonPressed(rl.MouseRightButton)
+
+	// Handle mouse clicks
+	if m.leftPressed && !m.sim.UI.EditMode {
+		tilePos := m.ScreenToTileCoordinates(m.mousePosition)
+		characterID := m.sim.GetTileAt(tilePos).CharacterID
+		if characterID != 0 {
+			m.sim.UI.SelectedCharacterID = characterID
+		}
+		fmt.Printf("Char clicked: %d\n", characterID)
 	}
 
-	if rl.IsMouseButtonPressed(rl.MouseRightButton) && m.sim.UI.EditMode {
+	if rl.IsMouseButtonPressed(rl.MouseRightButton) && !m.sim.UI.EditMode {
 	}
 
 	// Handle mouse wheel

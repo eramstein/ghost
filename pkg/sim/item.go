@@ -9,8 +9,8 @@ const (
 )
 
 type ItemRef struct {
-	Type  ItemType
-	Index int
+	ID   int
+	Type ItemType
 }
 
 type ItemLocationType uint8
@@ -22,19 +22,8 @@ const (
 )
 
 func (sim *Sim) InitItems() {
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
-	sim.AddItem(ItemTypeFood, Item{Type: ItemTypeFood}, ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}})
+	location := ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}}
+	for i := 0; i < 15; i++ {
+		sim.AddItem(Item{Type: ItemTypeFood}, location)
+	}
 }
