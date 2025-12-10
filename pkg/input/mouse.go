@@ -15,6 +15,7 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 	// Handle mouse clicks
 	if m.leftPressed && !m.sim.UI.EditMode {
 		tilePos := m.ScreenToTileCoordinates(m.mousePosition)
+		m.sim.UI.SelectedCharacterID = -1
 		for _, character := range m.sim.Characters {
 			if character.TilePosition.X == tilePos.X && character.TilePosition.Y == tilePos.Y {
 				m.sim.UI.SelectedCharacterID = character.ID

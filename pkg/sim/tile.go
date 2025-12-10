@@ -1,5 +1,7 @@
 package sim
 
+import "math"
+
 type TileType int
 
 const (
@@ -7,6 +9,7 @@ const (
 	TileTypeWall
 	TileTypeFloor
 	TileTypeDirt
+	TileTypeWater
 )
 
 func (tt TileType) String() string {
@@ -19,6 +22,8 @@ func (tt TileType) String() string {
 		return "Floor"
 	case TileTypeDirt:
 		return "Dirt"
+	case TileTypeWater:
+		return "Water"
 	default:
 		return "Unknown"
 	}
@@ -44,6 +49,18 @@ func (t *Tile) UpdateType(newType TileType) {
 	}
 }
 
-func (t *Tile) AddItem(itemID int, position TilePosition) {
+func (t *Tile) AddItem(itemID int) {
 	t.Items = append(t.Items, itemID)
+}
+
+func (t *Tile) RemoveItem(itemID int) {
+	for i, item := range t.Items {
+		if item == itemID {
+			t.Items = append(t.Items[:i], t.Items[i+1:]...)
+		}
+	}
+}
+
+func IsAdjacent(x1, y1, x2, y2 int) bool {
+	return math.Abs(float64(x1-x2)) <= 1 && math.Abs(float64(y1-y2)) <= 1
 }

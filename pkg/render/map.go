@@ -1,6 +1,7 @@
 package render
 
 import (
+	"gociv/pkg/config"
 	"gociv/pkg/sim"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -25,7 +26,7 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 	bottomBound := renderer.Camera.Target.Y + halfScreenHeight
 
 	// Add some padding to avoid edge artifacts
-	padding := float32(sim.TILE_SIZE)
+	padding := float32(config.TileSize)
 	leftBound -= padding
 	rightBound += padding
 	topBound -= padding
@@ -33,8 +34,8 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 
 	for i := range tiles {
 		// Calculate tile world position
-		tileWorldX := float32(tiles[i].Position.X * sim.TILE_SIZE)
-		tileWorldY := float32(tiles[i].Position.Y * sim.TILE_SIZE)
+		tileWorldX := float32(tiles[i].Position.X * config.TileSize)
+		tileWorldY := float32(tiles[i].Position.Y * config.TileSize)
 
 		// Check if tile is within visible bounds
 		if tileWorldX >= leftBound && tileWorldX <= rightBound &&
@@ -45,8 +46,8 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 			// // Draw tile coordinates as text
 			// coordText := fmt.Sprintf("%d,%d", tiles[i].Position.X, tiles[i].Position.Y)
 			// rl.DrawText(coordText,
-			// 	int32(tiles[i].Position.X*sim.TILE_SIZE)+2,
-			// 	int32(tiles[i].Position.Y*sim.TILE_SIZE)+2,
+			// 	int32(tiles[i].Position.X*config.TileSize)+2,
+			// 	int32(tiles[i].Position.Y*config.TileSize)+2,
 			// 	8,
 			// 	rl.White)
 
@@ -54,7 +55,7 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 	}
 
 	// Draw region border as a single rectangle outline
-	regionSize := float32(sim.REGION_SIZE * sim.TILE_SIZE)
+	regionSize := float32(config.RegionSize * config.TileSize)
 	rl.DrawRectangleLinesEx(
 		rl.Rectangle{X: 0, Y: 0, Width: regionSize, Height: regionSize},
 		2.0,
@@ -65,22 +66,22 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 func DrawTile(renderer *Renderer, simData *sim.Sim, tile sim.Tile) {
 	// terrain
 	rl.DrawRectangle(
-		int32(tile.Position.X*sim.TILE_SIZE),
-		int32(tile.Position.Y*sim.TILE_SIZE),
-		sim.TILE_SIZE,
-		sim.TILE_SIZE,
+		int32(tile.Position.X*config.TileSize),
+		int32(tile.Position.Y*config.TileSize),
+		config.TileSize,
+		config.TileSize,
 		TileTypeColors[tile.Type],
 	)
 	// items
 	for i, itemID := range tile.Items {
-		baseX := float32(tile.Position.X * sim.TILE_SIZE)
-		baseY := float32(tile.Position.Y * sim.TILE_SIZE)
+		baseX := float32(tile.Position.X * config.TileSize)
+		baseY := float32(tile.Position.Y * config.TileSize)
 
 		item := simData.ItemManager.GetItem(itemID)
 
 		itemSize := float32(5)
 		// Distribute items on a 3x3 grid within the tile
-		step := float32(sim.TILE_SIZE) / 3.0
+		step := float32(config.TileSize) / 3.0
 		col := i % 3
 		row := (i / 3) % 3
 		centerX := baseX + (step / 2.0) + float32(col)*step

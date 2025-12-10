@@ -3,25 +3,21 @@ package sim
 import (
 	"encoding/gob"
 	"fmt"
+	"gociv/pkg/config"
 	"math/rand"
 	"os"
 )
 
-const (
-	REGION_SIZE = 50
-	TILE_SIZE   = 30
-)
-
 func InitRegion() []Tile {
-	region := make([]Tile, REGION_SIZE*REGION_SIZE)
+	region := make([]Tile, config.RegionSize*config.RegionSize)
 
 	filename := "tiles.gob"
 	file, err := os.Open(filename)
 	if err != nil {
 		for i := range region {
 			region[i].Position = TilePosition{
-				X: i % REGION_SIZE,
-				Y: i / REGION_SIZE,
+				X: i % config.RegionSize,
+				Y: i / config.RegionSize,
 			}
 		}
 		return region
@@ -39,7 +35,7 @@ func InitRegion() []Tile {
 }
 
 func (s *Sim) GetTileAt(position TilePosition) *Tile {
-	return &s.Tiles[position.Y*REGION_SIZE+position.X]
+	return &s.Tiles[position.Y*config.RegionSize+position.X]
 }
 
 func (s *Sim) GetRandomEmptyTile() *Tile {

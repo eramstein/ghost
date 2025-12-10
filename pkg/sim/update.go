@@ -14,6 +14,6 @@ func (s *Sim) LogicUpdate() {
 // Things needed to be done every frame (movement...)
 func (s *Sim) FrameUpdate(deltaTime float32) {
 	for i := range s.Characters {
-		s.Characters[i].Move(deltaTime)
+		s.Move(&s.Characters[i], deltaTime)
 	}
 }

@@ -1,12 +1,14 @@
 package sim
 
+import "gociv/pkg/config"
+
 const PLAYER_SPEED = 200.0
 
 func InitPlayer() Player {
 	return Player{
 		WorldPosition: WorldPosition{
-			X: REGION_SIZE / 2 * TILE_SIZE,
-			Y: REGION_SIZE / 2 * TILE_SIZE,
+			X: config.RegionSize / 2 * config.TileSize,
+			Y: config.RegionSize / 2 * config.TileSize,
 		},
 	}
 }
@@ -20,7 +22,7 @@ func (p *Player) MoveLeft(deltaTime float32) {
 
 func (p *Player) MoveRight(deltaTime float32) {
 	newX := p.WorldPosition.X + PLAYER_SPEED*deltaTime
-	if newX <= REGION_SIZE*TILE_SIZE {
+	if newX <= config.RegionSize*config.TileSize {
 		p.WorldPosition.X = newX
 	}
 }
@@ -34,7 +36,7 @@ func (p *Player) MoveUp(deltaTime float32) {
 
 func (p *Player) MoveDown(deltaTime float32) {
 	newY := p.WorldPosition.Y + PLAYER_SPEED*deltaTime
-	if newY <= REGION_SIZE*TILE_SIZE {
+	if newY <= config.RegionSize*config.TileSize {
 		p.WorldPosition.Y = newY
 	}
 }

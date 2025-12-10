@@ -10,8 +10,14 @@ type Sim struct {
 }
 
 type Item struct {
-	Type     ItemType
-	Location ItemLocation
+	ID         int
+	Type       ItemType
+	Variant    int
+	Location   ItemLocation
+	OwnedBy    int   // character id, -1 if not owned
+	Efficiency int   // for food it's nutrition value
+	Durability int   // for materials it's how many builds they can support
+	Items      []int // Item IDs
 }
 
 type ItemLocation struct {
@@ -27,9 +33,10 @@ type Character struct {
 	TilePosition  TilePosition
 	Path          []TilePosition
 	Needs         Needs
-	Task          Task
+	CurrentTask   *Task
 	Objectives    []Objective
 	Ambitions     []Ambition
+	Inventory     []int // Object IDs
 }
 
 type UIState struct {
@@ -69,13 +76,13 @@ type Needs struct {
 type Task struct {
 	ID             uint64
 	Type           TaskType
-	ObjectiveID    int
-	Progress       float32      // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
-	ProductType    int          // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
-	ProductVariant int          // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
-	TargetItemID   int          // optional (-1 for nil), e.g. for eating tasks it's the food item to eat
-	TargetTile     TilePosition // optional, e.g. for building it's the tile ot build on
-	SourceItemID   int          // optional (-1 for nil), for bulding tasks it's the material item to use
+	Objective      *Objective
+	Progress       float32       // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
+	ProductType    int           // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
+	ProductVariant int           // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
+	TargetItem     *Item         // optional, e.g. for eating tasks it's the food item to eat
+	TargetTile     *TilePosition // optional, e.g. for building it's the tile ot build on
+	MaterialSource *Item         // optional, for bulding tasks it's the material item to use
 }
 
 type Objective struct {

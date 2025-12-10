@@ -3,6 +3,7 @@ package sim
 import (
 	"container/heap"
 	"fmt"
+	"gociv/pkg/config"
 	"math"
 )
 
@@ -54,12 +55,12 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 	startNode := &Node{
 		X:        start.X,
 		Y:        start.Y,
-		MoveCost: s.Tiles[start.Y*REGION_SIZE+start.X].MoveCost,
+		MoveCost: s.Tiles[start.Y*config.RegionSize+start.X].MoveCost,
 	}
 	endNode := &Node{
 		X:        end.X,
 		Y:        end.Y,
-		MoveCost: s.Tiles[end.Y*REGION_SIZE+end.X].MoveCost,
+		MoveCost: s.Tiles[end.Y*config.RegionSize+end.X].MoveCost,
 	}
 
 	// Initialize start node
@@ -105,12 +106,12 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 			newX, newY := current.X+dir[0], current.Y+dir[1]
 
 			// Check bounds
-			if newX < 0 || newX >= REGION_SIZE || newY < 0 || newY >= REGION_SIZE {
+			if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
 				continue
 			}
 
 			// Check if tile is passable
-			moveCost := s.Tiles[newY*REGION_SIZE+newX].MoveCost
+			moveCost := s.Tiles[newY*config.RegionSize+newX].MoveCost
 			if moveCost == ImpassableCost {
 				continue
 			}

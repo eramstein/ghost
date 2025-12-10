@@ -1,6 +1,7 @@
 package input
 
 import (
+	"gociv/pkg/config"
 	"gociv/pkg/sim"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -17,8 +18,8 @@ func (m *Manager) ScreenToWorld(screenX, screenY int32) (float32, float32) {
 
 // worldToTile converts world coordinates to tile coordinates
 func (m *Manager) WorldToTile(worldX, worldY float32) sim.TilePosition {
-	tileX := int(worldX / float32(sim.TILE_SIZE))
-	tileY := int(worldY / float32(sim.TILE_SIZE))
+	tileX := int(worldX / float32(config.TileSize))
+	tileY := int(worldY / float32(config.TileSize))
 
 	return sim.TilePosition{
 		X: tileX,

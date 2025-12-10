@@ -16,6 +16,22 @@ const (
 	BuildObjective
 )
 
+func (ot ObjectiveType) String() string {
+	switch ot {
+	case NoObjective:
+		return "No Objective"
+	case DrinkObjective:
+		return "Drink"
+	case EatObjective:
+		return "Eat"
+	case SleepObjective:
+		return "Sleep"
+	case BuildObjective:
+		return "Build"
+	}
+	return "Unknown"
+}
+
 func (sim *Sim) UpdateObjectives(character *Character) {
 	// periodically un-stuck all objectives to try again
 	if sim.Time%config.CharacterObjectiveResetInterval == 0 {
@@ -24,15 +40,15 @@ func (sim *Sim) UpdateObjectives(character *Character) {
 		}
 	}
 
-	if character.Needs.Food >= 50 && !character.HasObjective(EatObjective) {
+	if character.Needs.Food >= config.NeedFoodMax && !character.HasObjective(EatObjective) {
 		sim.AddObjective(character, EatObjective, 0)
 	}
 
-	if character.Needs.Water >= 50 && !character.HasObjective(DrinkObjective) {
+	if character.Needs.Water >= config.NeedWaterMax && !character.HasObjective(DrinkObjective) {
 		sim.AddObjective(character, DrinkObjective, 0)
 	}
 
-	if character.Needs.Sleep >= 50 && !character.HasObjective(SleepObjective) {
+	if character.Needs.Sleep >= config.NeedSleepMax && !character.HasObjective(SleepObjective) {
 		sim.AddObjective(character, SleepObjective, 0)
 	}
 }

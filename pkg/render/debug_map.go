@@ -2,6 +2,7 @@ package render
 
 import (
 	"fmt"
+	"gociv/pkg/config"
 	"gociv/pkg/sim"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -24,7 +25,7 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 	bottomBound := renderer.Camera.Target.Y + halfScreenHeight
 
 	// Add some padding to avoid edge artifacts
-	padding := float32(sim.TILE_SIZE)
+	padding := float32(config.TileSize)
 	leftBound -= padding
 	rightBound += padding
 	topBound -= padding
@@ -32,8 +33,8 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 
 	for i := range tiles {
 		// Calculate tile world position
-		tileWorldX := float32(tiles[i].Position.X * sim.TILE_SIZE)
-		tileWorldY := float32(tiles[i].Position.Y * sim.TILE_SIZE)
+		tileWorldX := float32(tiles[i].Position.X * config.TileSize)
+		tileWorldY := float32(tiles[i].Position.Y * config.TileSize)
 
 		// Check if tile is within visible bounds
 		if tileWorldX >= leftBound && tileWorldX <= rightBound &&
@@ -44,10 +45,10 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 				color = ColorWall
 			}
 			rl.DrawRectangle(
-				int32(tiles[i].Position.X*sim.TILE_SIZE),
-				int32(tiles[i].Position.Y*sim.TILE_SIZE),
-				sim.TILE_SIZE,
-				sim.TILE_SIZE,
+				int32(tiles[i].Position.X*config.TileSize),
+				int32(tiles[i].Position.Y*config.TileSize),
+				config.TileSize,
+				config.TileSize,
 				color,
 			)
 		}
@@ -65,8 +66,8 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 	// Draw path highlights
 	for i := range tiles {
 		// Calculate tile world position
-		tileWorldX := float32(tiles[i].Position.X * sim.TILE_SIZE)
-		tileWorldY := float32(tiles[i].Position.Y * sim.TILE_SIZE)
+		tileWorldX := float32(tiles[i].Position.X * config.TileSize)
+		tileWorldY := float32(tiles[i].Position.Y * config.TileSize)
 
 		// Check if tile is within visible bounds
 		if tileWorldX >= leftBound && tileWorldX <= rightBound &&
@@ -77,10 +78,10 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 			if pathTiles[key] {
 				// Draw path highlight overlay
 				rl.DrawRectangle(
-					int32(tiles[i].Position.X*sim.TILE_SIZE),
-					int32(tiles[i].Position.Y*sim.TILE_SIZE),
-					sim.TILE_SIZE,
-					sim.TILE_SIZE,
+					int32(tiles[i].Position.X*config.TileSize),
+					int32(tiles[i].Position.Y*config.TileSize),
+					config.TileSize,
+					config.TileSize,
 					ColorPath,
 				)
 			}
@@ -88,7 +89,7 @@ func DrawMapDebug(renderer *Renderer, tiles []sim.Tile, characters []sim.Charact
 	}
 
 	// Draw region border as a single rectangle outline
-	regionSize := float32(sim.REGION_SIZE * sim.TILE_SIZE)
+	regionSize := float32(config.RegionSize * config.TileSize)
 	rl.DrawRectangleLinesEx(
 		rl.Rectangle{X: 0, Y: 0, Width: regionSize, Height: regionSize},
 		2.0,

@@ -77,18 +77,18 @@ func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
 	// Current Task
 	renderer.RenderTextWithColor("Current Task:", x, y, rl.NewColor(255, 255, 255, 255))
 	y += int(lineHeight)
-	if character.Task.Type != sim.NoTaskType {
-		taskTypeStr := taskTypeToString(character.Task.Type)
+	if character.CurrentTask != nil && character.CurrentTask.Type != sim.NoTaskType {
+		taskTypeStr := character.CurrentTask.Type.String()
 		renderer.RenderTextWithColor(fmt.Sprintf("  Type: %s", taskTypeStr), x, y, rl.NewColor(200, 200, 200, 255))
 		y += int(lineHeight)
-		renderer.RenderTextWithColor(fmt.Sprintf("  Progress: %.1f%%", character.Task.Progress*100), x, y, rl.NewColor(200, 200, 200, 255))
+		renderer.RenderTextWithColor(fmt.Sprintf("  Progress: %.1f%%", character.CurrentTask.Progress*100), x, y, rl.NewColor(200, 200, 200, 255))
 		y += int(lineHeight)
-		if character.Task.TargetTile.X >= 0 && character.Task.TargetTile.Y >= 0 {
-			renderer.RenderTextWithColor(fmt.Sprintf("  Target: (%d, %d)", character.Task.TargetTile.X, character.Task.TargetTile.Y), x, y, rl.NewColor(200, 200, 200, 255))
+		if character.CurrentTask.TargetTile != nil {
+			renderer.RenderTextWithColor(fmt.Sprintf("  Target: (%d, %d)", character.CurrentTask.TargetTile.X, character.CurrentTask.TargetTile.Y), x, y, rl.NewColor(200, 200, 200, 255))
 			y += int(lineHeight)
 		}
-		if character.Task.TargetItemID >= 0 {
-			renderer.RenderTextWithColor(fmt.Sprintf("  Target Item: %d", character.Task.TargetItemID), x, y, rl.NewColor(200, 200, 200, 255))
+		if character.CurrentTask.TargetItem != nil {
+			renderer.RenderTextWithColor(fmt.Sprintf("  Target Item: %d", character.CurrentTask.TargetItem.Type), x, y, rl.NewColor(200, 200, 200, 255))
 			y += int(lineHeight)
 		}
 	} else {
@@ -102,7 +102,7 @@ func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
 	y += int(lineHeight)
 	if len(character.Objectives) > 0 {
 		for i, objective := range character.Objectives {
-			objTypeStr := objectiveTypeToString(objective.Type)
+			objTypeStr := objective.Type.String()
 			stuckStr := ""
 			if objective.Stuck {
 				stuckStr = " [STUCK]"
@@ -155,47 +155,5 @@ func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
 				y += int(lineHeight)
 			}
 		}
-	}
-}
-
-// Helper function to convert TaskType to string
-func taskTypeToString(taskType sim.TaskType) string {
-	switch taskType {
-	case sim.NoTaskType:
-		return "None"
-	case sim.Move:
-		return "Move"
-	case sim.Eat:
-		return "Eat"
-	case sim.Drink:
-		return "Drink"
-	case sim.Sleep:
-		return "Sleep"
-	case sim.PickUp:
-		return "PickUp"
-	case sim.Build:
-		return "Build"
-	case sim.Chop:
-		return "Chop"
-	default:
-		return "Unknown"
-	}
-}
-
-// Helper function to convert ObjectiveType to string
-func objectiveTypeToString(objType sim.ObjectiveType) string {
-	switch objType {
-	case sim.NoObjective:
-		return "None"
-	case sim.DrinkObjective:
-		return "Drink"
-	case sim.EatObjective:
-		return "Eat"
-	case sim.SleepObjective:
-		return "Sleep"
-	case sim.BuildObjective:
-		return "Build"
-	default:
-		return "Unknown"
 	}
 }

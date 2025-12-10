@@ -1,6 +1,10 @@
 package sim
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
+)
 
 const defaultItemCapacity = 200
 
@@ -115,16 +119,59 @@ func (im *ItemManager) GetUsedSlotCount() int {
 	return len(im.items) - len(im.freeSlots)
 }
 
+// GobEncode encodes the ItemManager for gob serialization.
+func (im *ItemManager) GobEncode() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	// Encode the unexported fields
+	if err := enc.Encode(im.items); err != nil {
+		return nil, err
+	}
+	if err := enc.Encode(im.usedSlots); err != nil {
+		return nil, err
+	}
+	if err := enc.Encode(im.freeSlots); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+// GobDecode decodes the ItemManager from gob serialization.
+func (im *ItemManager) GobDecode(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+
+	// Decode the unexported fields
+	if err := dec.Decode(&im.items); err != nil {
+		return err
+	}
+	if err := dec.Decode(&im.usedSlots); err != nil {
+		return err
+	}
+	if err := dec.Decode(&im.freeSlots); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Item management convenience methods for Sim
 func (s *Sim) AddItem(item Item, location ItemLocation) int {
 	index, _ := s.ItemManager.AddItem(item, location)
 	if location.LocationType == LocTile {
 		tile := s.GetTileAt(location.TilePosition)
-		tile.AddItem(index, location.TilePosition)
+		tile.AddItem(index)
 	}
 	return index
 }
 func (s *Sim) RemoveItem(id int) error {
+	item := s.ItemManager.GetItem(id)
+	if item.Location.LocationType == LocTile {
+		tile := s.GetTileAt(item.Location.TilePosition)
+		tile.RemoveItem(id)
+	}
 	return s.ItemManager.RemoveItem(id)
 }
 func (s *Sim) GetItem(id int) Item {

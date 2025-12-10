@@ -61,7 +61,7 @@ func (r *Renderer) DrawUI(simData *sim.Sim) {
 		tileTypeText := "Tile Type: " + simData.UI.EditorTileType.String()
 		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
 	}
-	if simData.UI.SelectedCharacterID != 0 {
+	if simData.UI.SelectedCharacterID != -1 {
 		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterID])
 	}
 }

@@ -1,6 +1,9 @@
 package sim
 
-import "gociv/pkg/config"
+import (
+	"fmt"
+	"gociv/pkg/config"
+)
 
 const CHARACTER_SPEED = 100
 
@@ -9,34 +12,34 @@ func (sim *Sim) InitCharacters() {
 		X: 10,
 		Y: 10,
 	})
-	sim.MakeCharacter("Emma", TilePosition{
-		X: 11,
-		Y: 13,
-	})
-	sim.MakeCharacter("Lise", TilePosition{
-		X: 11,
-		Y: 14,
-	})
-	sim.MakeCharacter("Ousmane", TilePosition{
-		X: 12,
-		Y: 10,
-	})
-	sim.MakeCharacter("Molly", TilePosition{
-		X: 12,
-		Y: 12,
-	})
-	sim.MakeCharacter("Robert", TilePosition{
-		X: 20,
-		Y: 14,
-	})
-	sim.MakeCharacter("Didier", TilePosition{
-		X: 20,
-		Y: 10,
-	})
-	sim.MakeCharacter("Morgane", TilePosition{
-		X: 20,
-		Y: 12,
-	})
+	// sim.MakeCharacter("Emma", TilePosition{
+	// 	X: 11,
+	// 	Y: 13,
+	// })
+	// sim.MakeCharacter("Lise", TilePosition{
+	// 	X: 11,
+	// 	Y: 14,
+	// })
+	// sim.MakeCharacter("Ousmane", TilePosition{
+	// 	X: 12,
+	// 	Y: 10,
+	// })
+	// sim.MakeCharacter("Molly", TilePosition{
+	// 	X: 12,
+	// 	Y: 12,
+	// })
+	// sim.MakeCharacter("Robert", TilePosition{
+	// 	X: 20,
+	// 	Y: 14,
+	// })
+	// sim.MakeCharacter("Didier", TilePosition{
+	// 	X: 20,
+	// 	Y: 10,
+	// })
+	// sim.MakeCharacter("Morgane", TilePosition{
+	// 	X: 20,
+	// 	Y: 12,
+	// })
 }
 
 func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
@@ -45,62 +48,96 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 		Name:         name,
 		TilePosition: pos,
 		WorldPosition: WorldPosition{
-			X: float32(pos.X*TILE_SIZE + TILE_SIZE/2),
-			Y: float32(pos.Y*TILE_SIZE + TILE_SIZE/2),
+			X: float32(pos.X*config.TileSize + config.TileSize/2),
+			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
+		},
+		Needs: Needs{
+			Food:  50,
+			Water: 99,
+			Sleep: 0,
 		},
 	}
 	sim.Characters = append(sim.Characters, character)
 }
 
 func (sim *Sim) UpdateCharacters() {
-	for i := range sim.Characters {
-		character := &sim.Characters[i]
-		character.UpdateNeeds()
-		sim.UpdateObjectives(character)
+	if sim.Time%config.CharacterNeedsUpdateInterval == 0 {
+		for i := range sim.Characters {
+			sim.Characters[i].UpdateNeeds()
+		}
+	}
+	if sim.Time%config.CharacterObjectiveUpdateInterval == 0 {
+		for i := range sim.Characters {
+			sim.UpdateObjectives(&sim.Characters[i])
+		}
+	}
+	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
+		for i := range sim.Characters {
+			if sim.Characters[i].CurrentTask == nil {
+				sim.SetCurrentTask(&sim.Characters[i])
+			}
+			sim.WorkOnCurrentTask(&sim.Characters[i])
+		}
 	}
 }
 
 func (character *Character) UpdateNeeds() {
-	character.Needs.Food += config.NeedFoodTick
-	character.Needs.Water += config.NeedWaterTick
-	character.Needs.Sleep += config.NeedSleepTick
+	character.Needs.Food++
+	character.Needs.Water++
+	character.Needs.Sleep++
 }
 
-func (c *Character) Move(deltaTime float32) {
-	if len(c.Path) == 0 {
+func (sim *Sim) Eat(character *Character) {
+	task := character.CurrentTask
+	item := task.TargetItem
+	task.Progress += 10
+	fmt.Println("Eating", character.Name, item.Type, item.Efficiency)
+	if task.Progress >= 100 {
+		character.Needs.Food -= item.Efficiency
+		if character.Needs.Food < 0 {
+			character.Needs.Food = 0
+		}
+		sim.ItemManager.RemoveItem(item.ID)
+	}
+}
+
+func (sim *Sim) Drink(character *Character) {
+	task := character.CurrentTask
+	position := task.TargetTile
+	tile := sim.GetTileAt(*position)
+	if tile.Type != TileTypeWater {
 		return
 	}
-	nextTile := c.Path[0]
-	nextTileWorldPosition := WorldPosition{
-		X: float32(nextTile.X),
-		Y: float32(nextTile.Y),
+	task.Progress += 50
+	fmt.Println("Drinking", character.Name)
+	if task.Progress >= 100 {
+		character.Needs.Water = 0
+		task.Progress = 100
 	}
-	var direction WorldPosition
-	if nextTileWorldPosition.X-c.WorldPosition.X > 0 {
-		direction.X = 1
-	} else {
-		direction.X = -1
-	}
-	if nextTileWorldPosition.Y-c.WorldPosition.Y > 0 {
-		direction.Y = 1
-	} else {
-		direction.Y = -1
-	}
+}
 
-	c.WorldPosition.X += direction.X * CHARACTER_SPEED * deltaTime
-	c.WorldPosition.Y += direction.Y * CHARACTER_SPEED * deltaTime
-
-	dx := c.WorldPosition.X - nextTileWorldPosition.X
-	dy := c.WorldPosition.Y - nextTileWorldPosition.Y
-	distance := dx*dx + dy*dy
-
-	if distance < (0.2*TILE_SIZE)*(0.2*TILE_SIZE) {
-		if ((direction.X == 1 && c.WorldPosition.X >= nextTileWorldPosition.X) ||
-			(direction.X == -1 && c.WorldPosition.X <= nextTileWorldPosition.X)) &&
-			((direction.Y == 1 && c.WorldPosition.Y >= nextTileWorldPosition.Y) ||
-				(direction.Y == -1 && c.WorldPosition.Y <= nextTileWorldPosition.Y)) {
-			c.Path = c.Path[1:]
-			// TODO: update character TilePosition
-		}
+func (sim *Sim) Sleep(character *Character) {
+	task := character.CurrentTask
+	fmt.Println("Sleeping", character.Name)
+	character.Needs.Sleep -= 5
+	if character.Needs.Sleep <= 0 {
+		character.Needs.Sleep = 0
+		task.Progress = 100
 	}
+}
+
+func (sim *Sim) PickUp(character *Character) {
+	task := character.CurrentTask
+	item := task.TargetItem
+	tile := sim.GetTileAt(item.Location.TilePosition)
+	if item.Location.LocationType != LocTile || !IsAdjacent(character.TilePosition.X, character.TilePosition.Y, item.Location.TilePosition.X, item.Location.TilePosition.Y) {
+		fmt.Printf("WARNING: Item %v to PICKUP is not on a tile or not adjacent\n", item)
+		sim.CancelTask(character)
+		return
+	}
+	fmt.Printf("Picking up %v\n", item)
+	character.Inventory = append(character.Inventory, item.ID)
+	item.Location.CharacterID = character.ID
+	tile.RemoveItem(item.ID)
+	task.Progress = 100
 }

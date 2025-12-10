@@ -26,6 +26,10 @@ func (m *Manager) HandleKeyboardEditor(deltaTime float32) {
 		m.sim.UI.EditorTileType = sim.TileTypeDirt
 		fmt.Println("Editor tile type set to: Dirt")
 	}
+	if rl.IsKeyPressed(rl.KeyFive) {
+		m.sim.UI.EditorTileType = sim.TileTypeWater
+		fmt.Println("Editor tile type set to: Water")
+	}
 
 	// Handle WASD movement
 	if rl.IsKeyDown(rl.KeyW) {
