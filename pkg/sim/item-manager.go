@@ -85,15 +85,8 @@ func (im *ItemManager) RemoveItem(id int) error {
 }
 
 // GetItem returns the item at the given ID.
-func (im *ItemManager) GetItem(id int) (Item, error) {
-	if id < 0 || id >= len(im.items) {
-		return Item{}, fmt.Errorf("item id %d out of range", id)
-	}
-	if !im.usedSlots[id] {
-		return Item{}, fmt.Errorf("item id %d is not in use", id)
-	}
-
-	return im.items[id], nil
+func (im *ItemManager) GetItem(id int) Item {
+	return im.items[id]
 }
 
 // GetItems returns all items of a specific type (excluding empty slots).
@@ -127,14 +120,14 @@ func (s *Sim) AddItem(item Item, location ItemLocation) int {
 	index, _ := s.ItemManager.AddItem(item, location)
 	if location.LocationType == LocTile {
 		tile := s.GetTileAt(location.TilePosition)
-		tile.AddItem(ItemRef{ID: index, Type: item.Type}, location.TilePosition)
+		tile.AddItem(index, location.TilePosition)
 	}
 	return index
 }
 func (s *Sim) RemoveItem(id int) error {
 	return s.ItemManager.RemoveItem(id)
 }
-func (s *Sim) GetItem(id int) (Item, error) {
+func (s *Sim) GetItem(id int) Item {
 	return s.ItemManager.GetItem(id)
 }
 func (s *Sim) GetItems(itemType ItemType) []Item {

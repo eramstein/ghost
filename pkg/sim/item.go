@@ -8,11 +8,6 @@ const (
 	ItemTypeWeapon
 )
 
-type ItemRef struct {
-	ID   int
-	Type ItemType
-}
-
 type ItemLocationType uint8
 
 const (

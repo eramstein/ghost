@@ -8,8 +8,10 @@ import (
 )
 
 type Renderer struct {
-	Camera  rl.Camera2D
-	Console *input.Console
+	Camera      rl.Camera2D
+	Console     *input.Console
+	FontManager *FontManager
+	DefaultFont rl.Font
 }
 
 func NewRenderer(simData *sim.Sim, console *input.Console) *Renderer {
@@ -20,7 +22,9 @@ func NewRenderer(simData *sim.Sim, console *input.Console) *Renderer {
 			Rotation: 0,
 			Zoom:     1,
 		},
-		Console: console,
+		Console:     console,
+		FontManager: NewFontManager(),
+		DefaultFont: rl.GetFontDefault(),
 	}
 	return r
 }
@@ -39,7 +43,7 @@ func (r *Renderer) Render(simData *sim.Sim) {
 	rl.EndMode2D()
 
 	// Draw UI elements (outside of 2D mode)
-	DrawUI(simData.UI)
+	r.DrawUI(simData)
 
 	// Draw console if open
 	if r.Console != nil && r.Console.IsOpen() {
@@ -48,17 +52,30 @@ func (r *Renderer) Render(simData *sim.Sim) {
 }
 
 // DrawUI renders UI elements like EditMode indicator
-func DrawUI(ui sim.UIState) {
-	if ui.EditMode {
+func (r *Renderer) DrawUI(simData *sim.Sim) {
+	if simData.UI.EditMode {
 		// Draw EditMode indicator in top-left corner
 		rl.DrawText("EDIT MODE", 10, 10, 20, ColorEditMode)
 
 		// Draw current EditorTileType below EditMode indicator
-		tileTypeText := "Tile Type: " + ui.EditorTileType.String()
+		tileTypeText := "Tile Type: " + simData.UI.EditorTileType.String()
 		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
+	}
+	if simData.UI.SelectedCharacterID != 0 {
+		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterID])
 	}
 }
 
 // todo - unload textures
 func (r *Renderer) Close() {
+}
+
+// RenderText renders text at a specific position
+func (r *Renderer) RenderText(text string, x, y int) {
+	rl.DrawTextEx(r.DefaultFont, text, rl.Vector2{X: float32(x), Y: float32(y)}, float32(r.DefaultFont.BaseSize), 1.0, rl.Black)
+}
+
+// RenderTextWithColor renders text at a specific position with a specific color
+func (r *Renderer) RenderTextWithColor(text string, x, y int, color rl.Color) {
+	rl.DrawTextEx(r.DefaultFont, text, rl.Vector2{X: float32(x), Y: float32(y)}, float32(r.DefaultFont.BaseSize), 1.0, color)
 }

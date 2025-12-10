@@ -40,7 +40,7 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 		if tileWorldX >= leftBound && tileWorldX <= rightBound &&
 			tileWorldY >= topBound && tileWorldY <= bottomBound {
 
-			DrawTile(renderer, tiles[i])
+			DrawTile(renderer, simData, tiles[i])
 
 			// // Draw tile coordinates as text
 			// coordText := fmt.Sprintf("%d,%d", tiles[i].Position.X, tiles[i].Position.Y)
@@ -62,7 +62,7 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 	)
 }
 
-func DrawTile(renderer *Renderer, tile sim.Tile) {
+func DrawTile(renderer *Renderer, simData *sim.Sim, tile sim.Tile) {
 	// terrain
 	rl.DrawRectangle(
 		int32(tile.Position.X*sim.TILE_SIZE),
@@ -72,9 +72,11 @@ func DrawTile(renderer *Renderer, tile sim.Tile) {
 		TileTypeColors[tile.Type],
 	)
 	// items
-	for i, itemRef := range tile.Items {
+	for i, itemID := range tile.Items {
 		baseX := float32(tile.Position.X * sim.TILE_SIZE)
 		baseY := float32(tile.Position.Y * sim.TILE_SIZE)
+
+		item := simData.ItemManager.GetItem(itemID)
 
 		itemSize := float32(5)
 		// Distribute items on a 3x3 grid within the tile
@@ -88,7 +90,7 @@ func DrawTile(renderer *Renderer, tile sim.Tile) {
 			rl.Rectangle{X: centerX, Y: centerY, Width: itemSize, Height: itemSize},
 			rl.Vector2{X: itemSize / 2.0, Y: itemSize / 2.0},
 			45.0,
-			ItemTypeColors[itemRef.Type],
+			ItemTypeColors[item.Type],
 		)
 	}
 }

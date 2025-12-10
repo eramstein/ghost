@@ -40,11 +40,10 @@ type UIState struct {
 }
 
 type Tile struct {
-	Type        TileType
-	Position    TilePosition
-	MoveCost    MoveCost
-	Items       []ItemRef
-	CharacterID int
+	Type     TileType
+	Position TilePosition
+	MoveCost MoveCost
+	Items    []int
 }
 
 type WorldPosition struct {
@@ -74,9 +73,9 @@ type Task struct {
 	Progress       float32      // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
 	ProductType    int          // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
 	ProductVariant int          // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
-	TargetItemID   int          // optional, e.g. for eating tasks it's the food item to eat
+	TargetItemID   int          // optional (-1 for nil), e.g. for eating tasks it's the food item to eat
 	TargetTile     TilePosition // optional, e.g. for building it's the tile ot build on
-	SourceItemID   int          // optional, for bulding tasks it's the material item to use
+	SourceItemID   int          // optional (-1 for nil), for bulding tasks it's the material item to use
 }
 
 type Objective struct {

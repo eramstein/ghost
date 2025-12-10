@@ -15,11 +15,12 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 	// Handle mouse clicks
 	if m.leftPressed && !m.sim.UI.EditMode {
 		tilePos := m.ScreenToTileCoordinates(m.mousePosition)
-		characterID := m.sim.GetTileAt(tilePos).CharacterID
-		if characterID != 0 {
-			m.sim.UI.SelectedCharacterID = characterID
+		for _, character := range m.sim.Characters {
+			if character.TilePosition.X == tilePos.X && character.TilePosition.Y == tilePos.Y {
+				m.sim.UI.SelectedCharacterID = character.ID
+			}
 		}
-		fmt.Printf("Char clicked: %d\n", characterID)
+		fmt.Printf("Char clicked: %d\n", m.sim.UI.SelectedCharacterID)
 	}
 
 	if rl.IsMouseButtonPressed(rl.MouseRightButton) && !m.sim.UI.EditMode {

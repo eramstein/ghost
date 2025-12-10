@@ -38,6 +38,11 @@ func main() {
 	renderer := render.NewRenderer(simData, nil)
 	inputManager := input.NewManager(simData, &renderer.Camera)
 	renderer.Console = inputManager.GetConsole()
+	if err := renderer.FontManager.LoadFont("default", "assets/fonts/Roboto-Regular.ttf", 16); err != nil {
+		fmt.Printf("failed to load default font: %v\n", err)
+	}
+	renderer.DefaultFont = renderer.FontManager.GetFont("default")
+
 	defer renderer.Close()
 
 	for !rl.WindowShouldClose() {
