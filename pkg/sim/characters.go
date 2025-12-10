@@ -9,8 +9,8 @@ const CHARACTER_SPEED = 100
 
 func (sim *Sim) InitCharacters() {
 	sim.MakeCharacter("Henry", TilePosition{
-		X: 10,
-		Y: 10,
+		X: 15,
+		Y: 15,
 	})
 	// sim.MakeCharacter("Emma", TilePosition{
 	// 	X: 11,

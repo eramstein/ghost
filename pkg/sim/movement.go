@@ -3,33 +3,20 @@ package sim
 import (
 	"fmt"
 	"gociv/pkg/config"
+	"math"
 )
 
-// func (sim *Sim) FollowPath(character *Character, extraMove bool) {
-// 	fmt.Printf("Following path for %v: %v\n", character.Name, character.Path)
-// 	if character.Path == nil {
-// 		return
-// 	}
-// 	task := character.CurrentTask
-// 	path := character.Path
-// 	if len(path) > 0 {
-// 		nextTile := path[0]
-// 		nextTileMoveCost := sim.GetTileAt(nextTile).MoveCost
-// 		if nextTileMoveCost == -1 {
-// 			return
-// 		}
-// 		if task.Progress >= float32(nextTileMoveCost) {
-// 			character.TilePosition = nextTile
-// 			character.Path = path[1:]
-// 			task.Progress = task.Progress - float32(nextTileMoveCost)
-// 			if len(character.Path) > 0 {
-// 				sim.FollowPath(character, true)
-// 			} else {
-// 				sim.CompleteTask(character)
-// 			}
-// 		}
-// 	}
-// }
+func (sim *Sim) advanceToNextTile(c *Character, nextTile TilePosition, nextTileWorldPosition WorldPosition) bool {
+	c.WorldPosition = nextTileWorldPosition
+	c.Path = c.Path[1:]
+	if len(c.Path) == 0 {
+		c.Path = nil
+		sim.CompleteTask(c)
+		return true
+	}
+	c.TilePosition = nextTile
+	return false
+}
 
 func (sim *Sim) MoveForTask(character *Character) {
 	task := character.CurrentTask
@@ -50,7 +37,6 @@ func (sim *Sim) MoveForTask(character *Character) {
 		}
 		character.Path = path
 	}
-	// sim.FollowPath(character, false)
 }
 
 func (sim *Sim) Move(c *Character, deltaTime float32) {
@@ -62,38 +48,44 @@ func (sim *Sim) Move(c *Character, deltaTime float32) {
 		X: float32(nextTile.X*config.TileSize + config.TileSize/2),
 		Y: float32(nextTile.Y*config.TileSize + config.TileSize/2),
 	}
-	var direction WorldPosition
-	if nextTileWorldPosition.X-c.WorldPosition.X > 0 {
-		direction.X = 1
-	} else {
-		direction.X = -1
-	}
-	if nextTileWorldPosition.Y-c.WorldPosition.Y > 0 {
-		direction.Y = 1
-	} else {
-		direction.Y = -1
-	}
 
-	c.WorldPosition.X += direction.X * CHARACTER_SPEED * deltaTime
-	c.WorldPosition.Y += direction.Y * CHARACTER_SPEED * deltaTime
-
-	dx := c.WorldPosition.X - nextTileWorldPosition.X
-	dy := c.WorldPosition.Y - nextTileWorldPosition.Y
+	// Calculate direction vector from current position to target
+	dx := nextTileWorldPosition.X - c.WorldPosition.X
+	dy := nextTileWorldPosition.Y - c.WorldPosition.Y
 	distance := dx*dx + dy*dy
 
-	if distance < (0.2*config.TileSize)*(0.2*config.TileSize) {
-		if ((direction.X == 1 && c.WorldPosition.X >= nextTileWorldPosition.X) ||
-			(direction.X == -1 && c.WorldPosition.X <= nextTileWorldPosition.X)) &&
-			((direction.Y == 1 && c.WorldPosition.Y >= nextTileWorldPosition.Y) ||
-				(direction.Y == -1 && c.WorldPosition.Y <= nextTileWorldPosition.Y)) {
-			c.Path = c.Path[1:]
-			if len(c.Path) == 0 {
-				c.Path = nil
-				sim.CompleteTask(c)
-				return
-			}
-			c.TilePosition = nextTile
-			fmt.Printf("Moved to %v\n", c.TilePosition)
+	// If we're already very close, snap to target and move to next tile
+	if distance < (0.1*config.TileSize)*(0.1*config.TileSize) {
+		if sim.advanceToNextTile(c, nextTile, nextTileWorldPosition) {
+			return
 		}
+		return
+	}
+
+	// Calculate distance and normalize direction vector
+	distanceSqrt := float32(math.Sqrt(float64(distance)))
+	if distanceSqrt <= 0 {
+		return
+	}
+
+	// Normalize direction
+	direction := WorldPosition{
+		X: dx / distanceSqrt,
+		Y: dy / distanceSqrt,
+	}
+
+	// Calculate movement this frame
+	moveDistance := CHARACTER_SPEED * deltaTime
+	remainingDistance := distanceSqrt
+
+	// If we would overshoot, snap to target instead
+	if moveDistance >= remainingDistance {
+		if sim.advanceToNextTile(c, nextTile, nextTileWorldPosition) {
+			return
+		}
+	} else {
+		// Move towards target
+		c.WorldPosition.X += direction.X * moveDistance
+		c.WorldPosition.Y += direction.Y * moveDistance
 	}
 }

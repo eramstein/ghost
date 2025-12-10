@@ -2,6 +2,7 @@ package input
 
 import (
 	"fmt"
+	"gociv/pkg/config"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -14,10 +15,10 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 
 	// Handle mouse clicks
 	if m.leftPressed && !m.sim.UI.EditMode {
-		tilePos := m.ScreenToTileCoordinates(m.mousePosition)
+		worldX, worldY := m.ScreenToWorld(rl.GetMouseX(), rl.GetMouseY())
 		m.sim.UI.SelectedCharacterID = -1
 		for _, character := range m.sim.Characters {
-			if character.TilePosition.X == tilePos.X && character.TilePosition.Y == tilePos.Y {
+			if character.WorldPosition.X >= worldX-config.TileSize/2 && character.WorldPosition.X <= worldX+config.TileSize/2 && character.WorldPosition.Y >= worldY-config.TileSize/2 && character.WorldPosition.Y <= worldY+config.TileSize/2 {
 				m.sim.UI.SelectedCharacterID = character.ID
 			}
 		}

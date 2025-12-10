@@ -22,7 +22,8 @@ type PriorityQueue []*Node
 func (pq PriorityQueue) Len() int { return len(pq) }
 
 func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].F < pq[j].F // Lower F value has higher priority
+	// Standard A*: lower F value has higher priority
+	return pq[i].F < pq[j].F
 }
 
 func (pq PriorityQueue) Swap(i, j int) {
@@ -36,10 +37,8 @@ func (pq *PriorityQueue) Push(x interface{}) {
 func (pq *PriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)
-	item := old[0]     // Get the root element (lowest F value)
-	old[0] = old[n-1]  // Move the last element to the root
-	*pq = old[0 : n-1] // Remove the last element
-	heap.Fix(pq, 0)    // Restore heap property after the swap
+	item := old[n-1] // heap.Pop swaps root to end, so we remove from end
+	*pq = old[0 : n-1]
 	return item
 }
 
@@ -50,47 +49,44 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
 	closedSet := make(map[string]bool)
+	openSetMap := make(map[string]*Node) // Map for O(1) lookup of nodes in open set
 
-	// Create start and end nodes
+	// Create start node
 	startNode := &Node{
 		X:        start.X,
 		Y:        start.Y,
+		G:        0,
 		MoveCost: s.Tiles[start.Y*config.RegionSize+start.X].MoveCost,
 	}
-	endNode := &Node{
-		X:        end.X,
-		Y:        end.Y,
-		MoveCost: s.Tiles[end.Y*config.RegionSize+end.X].MoveCost,
-	}
-
-	// Initialize start node
-	startNode.G = 0
-	startNode.H = heuristic(startNode, endNode)
+	startNode.H = heuristic(startNode.X, startNode.Y, end.X, end.Y)
 	startNode.F = startNode.G + startNode.H
 
 	// Add start node to open set
 	heap.Push(openSet, startNode)
+	openSetMap[getNodeKey(startNode.X, startNode.Y)] = startNode
 
 	// Main A* loop
 	for openSet.Len() > 0 {
 		// Get node with lowest F cost
 		current := heap.Pop(openSet).(*Node)
+		delete(openSetMap, getNodeKey(current.X, current.Y))
 
 		// Check if we reached the goal
 		if vicinity > 0 {
-			if current.X <= endNode.X+vicinity && current.X >= endNode.X-vicinity && current.Y <= endNode.Y+vicinity && current.Y >= endNode.Y-vicinity {
+			if current.X <= end.X+vicinity && current.X >= end.X-vicinity &&
+				current.Y <= end.Y+vicinity && current.Y >= end.Y-vicinity {
 				return reconstructPath(current)
 			}
 		} else {
-			if current.X == endNode.X && current.Y == endNode.Y {
+			if current.X == end.X && current.Y == end.Y {
 				return reconstructPath(current)
 			}
 		}
 
 		// Add current node to closed set
-		closedSet[getNodeKey(current)] = true
+		closedSet[getNodeKey(current.X, current.Y)] = true
 
-		// Check neighbors
+		// Check all 8 neighbors
 		directions := [][2]int{
 			{0, 1},   // up
 			{1, 1},   // up-right
@@ -111,22 +107,21 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 			}
 
 			// Check if tile is passable
-			moveCost := s.Tiles[newY*config.RegionSize+newX].MoveCost
+			tileIndex := newY*config.RegionSize + newX
+			moveCost := s.Tiles[tileIndex].MoveCost
 			if moveCost == ImpassableCost {
 				continue
 			}
 
 			// Skip if neighbor is in closed set
-			neighborKey := fmt.Sprintf("%d,%d", newX, newY)
+			neighborKey := getNodeKey(newX, newY)
 			if closedSet[neighborKey] {
 				continue
 			}
 
 			// Calculate movement cost based on direction (diagonal vs orthogonal)
-			dx := newX - current.X
-			dy := newY - current.Y
 			var movementMultiplier float64
-			if dx != 0 && dy != 0 {
+			if dir[0] != 0 && dir[1] != 0 {
 				// Diagonal movement - cost is sqrt(2) ≈ 1.414
 				movementMultiplier = math.Sqrt2
 			} else {
@@ -138,8 +133,8 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 			newG := current.G + float64(moveCost)*movementMultiplier
 
 			// Check if node already exists in open set
-			existingNode := findNodeInOpenSet(openSet, newX, newY)
-			if existingNode == nil {
+			existingNode, exists := openSetMap[neighborKey]
+			if !exists {
 				// New node, add to open set
 				neighbor := &Node{
 					X:        newX,
@@ -147,17 +142,25 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 					MoveCost: moveCost,
 					Parent:   current,
 					G:        newG,
-					H:        0, // Will be calculated below
 				}
-				neighbor.H = heuristic(neighbor, endNode)
+				neighbor.H = heuristic(neighbor.X, neighbor.Y, end.X, end.Y)
 				neighbor.F = neighbor.G + neighbor.H
 				heap.Push(openSet, neighbor)
+				openSetMap[neighborKey] = neighbor
 			} else if newG < existingNode.G {
 				// Found a better path to existing node, update it
 				existingNode.Parent = current
 				existingNode.G = newG
-				existingNode.H = heuristic(existingNode, endNode)
+				existingNode.MoveCost = moveCost
+				existingNode.H = heuristic(existingNode.X, existingNode.Y, end.X, end.Y)
 				existingNode.F = existingNode.G + existingNode.H
+				// Find the index and fix the heap
+				for i, node := range *openSet {
+					if node == existingNode {
+						heap.Fix(openSet, i)
+						break
+					}
+				}
 			}
 		}
 	}
@@ -166,27 +169,17 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 	return nil
 }
 
-// heuristic calculates the diagonal distance between two nodes
-func heuristic(a, b *Node) float64 {
-	dx := math.Abs(float64(a.X - b.X))
-	dy := math.Abs(float64(a.Y - b.Y))
+// heuristic calculates the diagonal distance between two positions
+func heuristic(x1, y1, x2, y2 int) float64 {
+	dx := math.Abs(float64(x1 - x2))
+	dy := math.Abs(float64(y1 - y2))
 	// Using diagonal distance formula: max(dx, dy) + (sqrt2 - 1) * min(dx, dy)
 	return math.Max(dx, dy) + 0.414*math.Min(dx, dy)
 }
 
-// findNodeInOpenSet finds a node in the open set by coordinates
-func findNodeInOpenSet(openSet *PriorityQueue, x, y int) *Node {
-	for _, node := range *openSet {
-		if node.X == x && node.Y == y {
-			return node
-		}
-	}
-	return nil
-}
-
-// getNodeKey returns a unique key for a node
-func getNodeKey(node *Node) string {
-	return fmt.Sprintf("%d,%d", node.X, node.Y)
+// getNodeKey returns a unique key for a position
+func getNodeKey(x, y int) string {
+	return fmt.Sprintf("%d,%d", x, y)
 }
 
 // reconstructPath builds the path from end node to start node, excluding the initial position
