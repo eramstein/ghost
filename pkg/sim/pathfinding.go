@@ -149,12 +149,13 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 				openSetMap[neighborKey] = neighbor
 			} else if newG < existingNode.G {
 				// Found a better path to existing node, update it
+				// Update parent FIRST to ensure path reconstruction works correctly
 				existingNode.Parent = current
 				existingNode.G = newG
 				existingNode.MoveCost = moveCost
-				existingNode.H = heuristic(existingNode.X, existingNode.Y, end.X, end.Y)
+				// H doesn't change (it's based on distance to goal), but recalculate F
 				existingNode.F = existingNode.G + existingNode.H
-				// Find the index and fix the heap
+				// Find the index and fix the heap to maintain priority order
 				for i, node := range *openSet {
 					if node == existingNode {
 						heap.Fix(openSet, i)
