@@ -2,11 +2,18 @@ package sim
 
 type Sim struct {
 	Time        int // in minutes since the start of the simulation
+	Calendar    Calendar
 	UI          UIState
 	Player      Player
 	Tiles       []Tile
 	Characters  []Character
 	ItemManager *ItemManager
+}
+
+type Calendar struct {
+	Minute int
+	Hour   int
+	Day    int
 }
 
 type Item struct {
