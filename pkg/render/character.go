@@ -77,11 +77,11 @@ func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
 	// Current Task
 	renderer.RenderTextWithColor("Current Task:", x, y, rl.NewColor(255, 255, 255, 255))
 	y += int(lineHeight)
-	if character.CurrentTask != nil && character.CurrentTask.Type != sim.NoTaskType {
+	if character.CurrentTask != nil && character.CurrentTask.Type != sim.Move && character.CurrentTask.Type != sim.NoTaskType {
 		taskTypeStr := character.CurrentTask.Type.String()
 		renderer.RenderTextWithColor(fmt.Sprintf("  Type: %s", taskTypeStr), x, y, rl.NewColor(200, 200, 200, 255))
 		y += int(lineHeight)
-		renderer.RenderTextWithColor(fmt.Sprintf("  Progress: %.1f%%", character.CurrentTask.Progress*100), x, y, rl.NewColor(200, 200, 200, 255))
+		renderer.RenderTextWithColor(fmt.Sprintf("  Progress: %.1f%%", character.CurrentTask.Progress), x, y, rl.NewColor(200, 200, 200, 255))
 		y += int(lineHeight)
 		if character.CurrentTask.TargetTile != nil {
 			renderer.RenderTextWithColor(fmt.Sprintf("  Target: (%d, %d)", character.CurrentTask.TargetTile.X, character.CurrentTask.TargetTile.Y), x, y, rl.NewColor(200, 200, 200, 255))

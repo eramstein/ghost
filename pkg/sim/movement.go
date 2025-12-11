@@ -6,16 +6,10 @@ import (
 	"math"
 )
 
-func (sim *Sim) advanceToNextTile(c *Character, nextTile TilePosition, nextTileWorldPosition WorldPosition) bool {
+func (sim *Sim) advanceToNextTile(c *Character, nextTile TilePosition, nextTileWorldPosition WorldPosition) {
 	c.WorldPosition = nextTileWorldPosition
 	c.Path = c.Path[1:]
-	if len(c.Path) == 0 {
-		c.Path = nil
-		sim.CompleteTask(c)
-		return true
-	}
 	c.TilePosition = nextTile
-	return false
 }
 
 func (sim *Sim) MoveForTask(character *Character) {
@@ -28,6 +22,14 @@ func (sim *Sim) MoveForTask(character *Character) {
 		fmt.Printf("Task target is not a *TilePosition: %v\n", task.TargetTile)
 		return
 	}
+
+	// are we there yet?
+	if character.TilePosition.X == target.X && character.TilePosition.Y == target.Y {
+		sim.CompleteTask(character)
+		return
+	}
+
+	// if the character has not set its path yet, or is headed in the wrong direction, find a path to the target
 	if len(character.Path) == 0 || character.Path[len(character.Path)-1] != *target {
 		path := sim.FindPath(character.TilePosition, *target, 0)
 		if path == nil {
@@ -56,9 +58,7 @@ func (sim *Sim) Move(c *Character, deltaTime float32) {
 
 	// If we're already very close, snap to target and move to next tile
 	if distance < (0.1*config.TileSize)*(0.1*config.TileSize) {
-		if sim.advanceToNextTile(c, nextTile, nextTileWorldPosition) {
-			return
-		}
+		sim.advanceToNextTile(c, nextTile, nextTileWorldPosition)
 		return
 	}
 
@@ -80,9 +80,7 @@ func (sim *Sim) Move(c *Character, deltaTime float32) {
 
 	// If we would overshoot, snap to target instead
 	if moveDistance >= remainingDistance {
-		if sim.advanceToNextTile(c, nextTile, nextTileWorldPosition) {
-			return
-		}
+		sim.advanceToNextTile(c, nextTile, nextTileWorldPosition)
 	} else {
 		// Move towards target
 		c.WorldPosition.X += direction.X * moveDistance

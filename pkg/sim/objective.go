@@ -75,7 +75,7 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 func (character *Character) CompleteObjective(objective *Objective) {
 	fmt.Printf("Completing objective %v %v\n", character.Name, objective.Type)
 	for i, charObjective := range character.Objectives {
-		if &charObjective == objective {
+		if charObjective.Type == objective.Type && charObjective.Variant == objective.Variant {
 			character.Objectives = append(character.Objectives[:i], character.Objectives[i+1:]...)
 		}
 	}

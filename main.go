@@ -55,7 +55,7 @@ func main() {
 		if !simData.UI.Pause {
 			// Frame updates (things needed to be done every frame)
 			simData.FrameUpdate(deltaTime)
-			// Logic updates (long term simulation) - only when not paused
+			// Logic updates (long term simulation)
 			if tickTime >= sim.SIM_STEP {
 				simData.LogicUpdate()
 				tickTime = 0.0
