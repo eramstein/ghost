@@ -44,6 +44,11 @@ func LoadSim(filename string) (*sim.Sim, error) {
 
 // SaveTiles saves only the Tiles data from a Sim to a file using gob encoding
 func SaveTiles(tiles []sim.Tile, filename string) error {
+	// Set all Items to nil before saving
+	for i := range tiles {
+		tiles[i].Items = nil
+	}
+
 	file, err := os.Create(filename)
 	if err != nil {
 		return fmt.Errorf("failed to create file %s: %w", filename, err)

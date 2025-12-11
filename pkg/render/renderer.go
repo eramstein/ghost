@@ -39,20 +39,16 @@ func (r *Renderer) Render(simData *sim.Sim) {
 	DrawMap(r, simData)
 	DrawPlayer(r, simData.Player)
 	DrawCharacters(r, simData.Characters)
-	DisplayTime(r, &simData.Calendar)
 	rl.EndMode2D()
 
 	// Draw UI elements (outside of 2D mode)
 	r.DrawUI(simData)
-
-	// Draw console if open
-	if r.Console != nil && r.Console.IsOpen() {
-		DrawConsole(r.Console)
-	}
 }
 
 // DrawUI renders UI elements like EditMode indicator
 func (r *Renderer) DrawUI(simData *sim.Sim) {
+	DisplayTime(r, &simData.Calendar)
+
 	if simData.UI.EditMode {
 		// Draw EditMode indicator in top-left corner
 		rl.DrawText("EDIT MODE", 10, 10, 20, ColorEditMode)
@@ -63,6 +59,10 @@ func (r *Renderer) DrawUI(simData *sim.Sim) {
 	}
 	if simData.UI.SelectedCharacterID != -1 {
 		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterID])
+	}
+	// Draw console if open
+	if r.Console != nil && r.Console.IsOpen() {
+		DrawConsole(r.Console)
 	}
 }
 

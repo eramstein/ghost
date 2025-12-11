@@ -1,6 +1,9 @@
 package sim
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type TileType int
 
@@ -54,6 +57,7 @@ func (t *Tile) AddItem(itemID int) {
 }
 
 func (t *Tile) RemoveItem(itemID int) {
+	fmt.Printf("Removing item %d from tile %v with items %v\n", itemID, t.Position, t.Items)
 	for i, item := range t.Items {
 		if item == itemID {
 			t.Items = append(t.Items[:i], t.Items[i+1:]...)

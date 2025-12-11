@@ -62,6 +62,7 @@ func (im *ItemManager) AddItem(item Item, location ItemLocation) (int, error) {
 	id := im.freeSlots[last]
 	im.freeSlots = im.freeSlots[:last]
 
+	item.ID = id
 	item.Location = location
 	im.items[id] = item
 	im.usedSlots[id] = true
@@ -91,6 +92,18 @@ func (im *ItemManager) RemoveItem(id int) error {
 // GetItem returns the item at the given ID.
 func (im *ItemManager) GetItem(id int) Item {
 	return im.items[id]
+}
+
+// UpdateItemLocation updates the location of an item.
+func (im *ItemManager) UpdateItemLocation(id int, location ItemLocation) error {
+	if id < 0 || id >= len(im.items) {
+		return fmt.Errorf("item id %d out of range", id)
+	}
+	if !im.usedSlots[id] {
+		return fmt.Errorf("item id %d is not in use", id)
+	}
+	im.items[id].Location = location
+	return nil
 }
 
 // GetItems returns all items of a specific type (excluding empty slots).
@@ -158,7 +171,12 @@ func (im *ItemManager) GobDecode(data []byte) error {
 }
 
 // Item management convenience methods for Sim
+func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int) int {
+	item.OwnedBy = owner
+	return s.AddItem(item, location)
+}
 func (s *Sim) AddItem(item Item, location ItemLocation) int {
+	item.OwnedBy = -1
 	index, _ := s.ItemManager.AddItem(item, location)
 	if location.LocationType == LocTile {
 		tile := s.GetTileAt(location.TilePosition)
@@ -168,9 +186,24 @@ func (s *Sim) AddItem(item Item, location ItemLocation) int {
 }
 func (s *Sim) RemoveItem(id int) error {
 	item := s.ItemManager.GetItem(id)
+	fmt.Printf("Removing item %d\n", id)
 	if item.Location.LocationType == LocTile {
 		tile := s.GetTileAt(item.Location.TilePosition)
+		fmt.Printf("Removing item %d from tile %v with items %v\n", id, item.Location.TilePosition, tile.Items)
 		tile.RemoveItem(id)
+	} else if item.Location.LocationType == LocCharacter {
+		// Remove from character inventory
+		characterID := item.Location.CharacterID
+		if characterID >= 0 && characterID < len(s.Characters) {
+			character := &s.Characters[characterID]
+			for i, invItemID := range character.Inventory {
+				if invItemID == id {
+					character.Inventory = append(character.Inventory[:i], character.Inventory[i+1:]...)
+					fmt.Printf("Removed item %d from character %d inventory\n", id, characterID)
+					break
+				}
+			}
+		}
 	}
 	return s.ItemManager.RemoveItem(id)
 }

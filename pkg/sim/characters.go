@@ -52,7 +52,7 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
 		},
 		Needs: Needs{
-			Food:  50,
+			Food:  80,
 			Water: 99,
 			Sleep: 0,
 		},
@@ -97,7 +97,7 @@ func (sim *Sim) Eat(character *Character) {
 		if character.Needs.Food < 0 {
 			character.Needs.Food = 0
 		}
-		sim.ItemManager.RemoveItem(item.ID)
+		sim.RemoveItem(item.ID)
 	}
 }
 
