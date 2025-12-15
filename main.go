@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gociv/pkg/data"
 	"gociv/pkg/input"
 	"gociv/pkg/render"
 	"gociv/pkg/sim"
@@ -22,6 +23,12 @@ func main() {
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
+
+	// Load all game data
+	if err := data.LoadAllData(); err != nil {
+		fmt.Printf("Error loading game data: %v\n", err)
+		panic(err)
+	}
 
 	// Try to load quicksave first, fallback to InitSim if it fails
 	var simData *sim.Sim

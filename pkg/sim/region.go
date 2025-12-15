@@ -35,7 +35,11 @@ func InitRegion() []Tile {
 }
 
 func (s *Sim) GetTileAt(position TilePosition) *Tile {
-	return &s.Tiles[position.Y*config.RegionSize+position.X]
+	return &s.Tiles[s.GetTileIDFromPosition(position)]
+}
+
+func (s *Sim) GetTileIDFromPosition(position TilePosition) int {
+	return position.Y*config.RegionSize + position.X
 }
 
 func (s *Sim) GetRandomEmptyTile() *Tile {

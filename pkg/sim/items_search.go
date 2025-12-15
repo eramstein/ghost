@@ -12,7 +12,7 @@ func (sim *Sim) ScanForItem(position TilePosition, maxDistance int, itemType Ite
 	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
 		tile := sim.GetTileAt(position)
 		for _, itemID := range tile.Items {
-			item := sim.ItemManager.GetItem(itemID)
+			item := sim.GetItem(itemID)
 			if item.Type == itemType && (item.Variant == variant || variant == -1) && (!unclaimedOnly || item.OwnedBy == -1) {
 				return &item
 			}
@@ -87,7 +87,7 @@ func (sim *Sim) FindItemInTile(x int, y int, itemType ItemType, variant int, unc
 	}
 	tile := sim.GetTileAt(TilePosition{X: x, Y: y})
 	for _, itemID := range tile.Items {
-		item := sim.ItemManager.GetItem(itemID)
+		item := sim.GetItem(itemID)
 		if item.Type == itemType && (item.Variant == variant || variant == -1) && (!unclaimedOnly || item.OwnedBy == -1) {
 			fmt.Printf("Found item %v ID %d %d\n", item, item.ID, itemID)
 			return &item
@@ -98,7 +98,7 @@ func (sim *Sim) FindItemInTile(x int, y int, itemType ItemType, variant int, unc
 
 func (sim *Sim) FindInInventory(character *Character, itemType ItemType, variant int) *Item {
 	for _, itemID := range character.Inventory {
-		item := sim.ItemManager.GetItem(itemID)
+		item := sim.GetItem(itemID)
 		if item.Type == itemType && (item.Variant == variant || variant == -1) {
 			return &item
 		}

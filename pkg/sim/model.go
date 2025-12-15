@@ -7,6 +7,7 @@ type Sim struct {
 	Player      Player
 	Tiles       []Tile
 	Characters  []Character
+	Plants      []Plant
 	ItemManager *ItemManager
 }
 
@@ -44,13 +45,6 @@ type Character struct {
 	Objectives    []Objective
 	Ambitions     []Ambition
 	Inventory     []int // Object IDs
-}
-
-type UIState struct {
-	EditMode            bool
-	Pause               bool
-	EditorTileType      TileType
-	SelectedCharacterID int
 }
 
 type Tile struct {
@@ -101,4 +95,22 @@ type Objective struct {
 
 type Ambition struct {
 	Description string
+}
+
+// Plants grow and can produce edible or craft materials (fruits, wood, etc.)
+type Plant struct {
+	ID          int
+	Position    TilePosition
+	PlantType   PlantType
+	Variant     int
+	GrowthStage int // 0-100
+	GrowthRate  int // How many growth stages per update
+	Produces    PlantProduction
+}
+
+type PlantProduction struct {
+	Type            ItemType
+	Variant         int
+	ProductionStage int // 0-100
+	ProductionRate  int // How many production stages per update
 }

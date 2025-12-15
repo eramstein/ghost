@@ -51,8 +51,8 @@ func (im *ItemManager) growCapacity() {
 	}
 }
 
-// AddItem adds an item and returns its global ID.
-func (im *ItemManager) AddItem(item Item, location ItemLocation) (int, error) {
+// addItem adds an item and returns its global ID.
+func (im *ItemManager) addItem(item Item, location ItemLocation) (int, error) {
 	if len(im.freeSlots) == 0 {
 		im.growCapacity()
 	}
@@ -70,8 +70,8 @@ func (im *ItemManager) AddItem(item Item, location ItemLocation) (int, error) {
 	return id, nil
 }
 
-// RemoveItem removes an item at the given ID and frees the slot.
-func (im *ItemManager) RemoveItem(id int) error {
+// removeItem removes an item at the given ID and frees the slot.
+func (im *ItemManager) removeItem(id int) error {
 	if id < 0 || id >= len(im.items) {
 		return fmt.Errorf("item id %d out of range", id)
 	}
@@ -89,8 +89,8 @@ func (im *ItemManager) RemoveItem(id int) error {
 	return nil
 }
 
-// GetItem returns the item at the given ID.
-func (im *ItemManager) GetItem(id int) Item {
+// getItem returns the item at the given ID.
+func (im *ItemManager) getItem(id int) Item {
 	return im.items[id]
 }
 
@@ -106,8 +106,8 @@ func (im *ItemManager) UpdateItemLocation(id int, location ItemLocation) error {
 	return nil
 }
 
-// GetItems returns all items of a specific type (excluding empty slots).
-func (im *ItemManager) GetItems(itemType ItemType) []Item {
+// getItems returns all items of a specific type (excluding empty slots).
+func (im *ItemManager) getItems(itemType ItemType) []Item {
 	var result []Item
 	for i, item := range im.items {
 		if im.usedSlots[i] && item.Type == itemType {
@@ -117,8 +117,8 @@ func (im *ItemManager) GetItems(itemType ItemType) []Item {
 	return result
 }
 
-// GetFreeSlotCount returns the number of free slots available.
-func (im *ItemManager) GetFreeSlotCount() int {
+// getFreeSlotCount returns the number of free slots available.
+func (im *ItemManager) getFreeSlotCount() int {
 	return len(im.freeSlots)
 }
 
@@ -127,8 +127,8 @@ func (im *ItemManager) GetTotalCapacity() int {
 	return len(im.items)
 }
 
-// GetUsedSlotCount returns the number of used slots.
-func (im *ItemManager) GetUsedSlotCount() int {
+// getUsedSlotCount returns the number of used slots.
+func (im *ItemManager) getUsedSlotCount() int {
 	return len(im.items) - len(im.freeSlots)
 }
 
@@ -177,7 +177,7 @@ func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int) int {
 }
 func (s *Sim) AddItem(item Item, location ItemLocation) int {
 	item.OwnedBy = -1
-	index, _ := s.ItemManager.AddItem(item, location)
+	index, _ := s.ItemManager.addItem(item, location)
 	if location.LocationType == LocTile {
 		tile := s.GetTileAt(location.TilePosition)
 		tile.AddItem(index)
@@ -185,7 +185,7 @@ func (s *Sim) AddItem(item Item, location ItemLocation) int {
 	return index
 }
 func (s *Sim) RemoveItem(id int) error {
-	item := s.ItemManager.GetItem(id)
+	item := s.ItemManager.getItem(id)
 	fmt.Printf("Removing item %d\n", id)
 	if item.Location.LocationType == LocTile {
 		tile := s.GetTileAt(item.Location.TilePosition)
@@ -205,17 +205,17 @@ func (s *Sim) RemoveItem(id int) error {
 			}
 		}
 	}
-	return s.ItemManager.RemoveItem(id)
+	return s.ItemManager.removeItem(id)
 }
 func (s *Sim) GetItem(id int) Item {
-	return s.ItemManager.GetItem(id)
+	return s.ItemManager.getItem(id)
 }
 func (s *Sim) GetItems(itemType ItemType) []Item {
-	return s.ItemManager.GetItems(itemType)
+	return s.ItemManager.getItems(itemType)
 }
 func (s *Sim) GetItemCount() int {
-	return s.ItemManager.GetUsedSlotCount()
+	return s.ItemManager.getUsedSlotCount()
 }
 func (s *Sim) GetFreeItemSlots() int {
-	return s.ItemManager.GetFreeSlotCount()
+	return s.ItemManager.getFreeSlotCount()
 }

@@ -2,7 +2,6 @@ package input
 
 import (
 	"fmt"
-	"gociv/pkg/config"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -15,14 +14,23 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 
 	// Handle mouse clicks
 	if m.leftPressed && !m.sim.UI.EditMode {
+		m.ClearSelections()
 		worldX, worldY := m.ScreenToWorld(rl.GetMouseX(), rl.GetMouseY())
-		m.sim.UI.SelectedCharacterID = -1
+		tilePosition := m.WorldToTile(worldX, worldY)
+		tileID := m.sim.GetTileIDFromPosition(tilePosition)
+		m.SelectTile(tileID)
 		for _, character := range m.sim.Characters {
-			if character.WorldPosition.X >= worldX-config.TileSize/2 && character.WorldPosition.X <= worldX+config.TileSize/2 && character.WorldPosition.Y >= worldY-config.TileSize/2 && character.WorldPosition.Y <= worldY+config.TileSize/2 {
-				m.sim.UI.SelectedCharacterID = character.ID
+			if character.TilePosition.X == tilePosition.X && character.TilePosition.Y == tilePosition.Y {
+				m.SelectCharacter(character.ID)
+				break
 			}
 		}
-		fmt.Printf("Char clicked: %d\n", m.sim.UI.SelectedCharacterID)
+		for _, plant := range m.sim.Plants {
+			if plant.Position.X == tilePosition.X && plant.Position.Y == tilePosition.Y {
+				m.SelectPlant(plant.ID)
+				break
+			}
+		}
 	}
 
 	if rl.IsMouseButtonPressed(rl.MouseRightButton) && !m.sim.UI.EditMode {

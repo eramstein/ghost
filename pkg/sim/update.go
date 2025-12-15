@@ -9,6 +9,7 @@ func (s *Sim) LogicUpdate() {
 	fmt.Println("TICK !")
 	s.UpdateTime()
 	s.UpdateCharacters()
+	s.UpdatePlants()
 }
 
 // Things needed to be done every frame (movement...)

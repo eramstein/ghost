@@ -77,7 +77,7 @@ func DrawTile(renderer *Renderer, simData *sim.Sim, tile sim.Tile) {
 		baseX := float32(tile.Position.X * config.TileSize)
 		baseY := float32(tile.Position.Y * config.TileSize)
 
-		item := simData.ItemManager.GetItem(itemID)
+		item := simData.GetItem(itemID)
 
 		itemSize := float32(5)
 		// Distribute items on a 3x3 grid within the tile

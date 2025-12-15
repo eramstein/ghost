@@ -15,6 +15,7 @@ var (
 	ColorDirt       = rl.Color{R: 125, G: 78, B: 87, A: 255}
 	ColorLife       = rl.Color{R: 214, G: 104, B: 83, A: 255}
 	ColorWater      = rl.Color{R: 104, G: 170, B: 214, A: 255}
+	ColorPlant      = rl.Color{R: 72, G: 104, B: 84, A: 255}
 
 	// Debug or Editor colors
 	ColorEditMode = rl.Color{R: 255, G: 255, B: 0, A: 255} // Yellow for EditMode indicator

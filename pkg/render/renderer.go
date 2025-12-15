@@ -37,6 +37,7 @@ func (r *Renderer) Render(simData *sim.Sim) {
 	rl.ClearBackground(ColorBackground)
 	rl.BeginMode2D(r.Camera)
 	DrawMap(r, simData)
+	DrawPlants(r, simData.Plants)
 	DrawPlayer(r, simData.Player)
 	DrawCharacters(r, simData.Characters)
 	rl.EndMode2D()
@@ -57,9 +58,13 @@ func (r *Renderer) DrawUI(simData *sim.Sim) {
 		tileTypeText := "Tile Type: " + simData.UI.EditorTileType.String()
 		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
 	}
-	if simData.UI.SelectedCharacterID != -1 {
-		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterID])
+	if simData.UI.SelectedCharacterIndex != -1 {
+		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterIndex])
 	}
+	if simData.UI.SelectedPlantIndex != -1 {
+		DrawPlantDetails(r, &simData.Plants[simData.UI.SelectedPlantIndex])
+	}
+
 	// Draw console if open
 	if r.Console != nil && r.Console.IsOpen() {
 		DrawConsole(r.Console)
