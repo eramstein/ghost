@@ -8,15 +8,9 @@ func (m *Manager) SelectTile(tileID int) {
 	m.sim.UI.SelectedTileIndex = tileID
 }
 
+// SelectPlant now takes a plant ID (managed by PlantManager) rather than a slice index.
 func (m *Manager) SelectPlant(plantID int) {
-	plantIndex := -1
-	for i, plant := range m.sim.Plants {
-		if plant.ID == plantID {
-			plantIndex = i
-			break
-		}
-	}
-	m.sim.UI.SelectedPlantIndex = plantIndex
+	m.sim.UI.SelectedPlantIndex = plantID
 }
 
 func (m *Manager) ClearSelections() {

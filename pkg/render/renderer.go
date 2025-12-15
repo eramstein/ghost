@@ -37,7 +37,7 @@ func (r *Renderer) Render(simData *sim.Sim) {
 	rl.ClearBackground(ColorBackground)
 	rl.BeginMode2D(r.Camera)
 	DrawMap(r, simData)
-	DrawPlants(r, simData.Plants)
+	DrawPlants(r, simData.GetPlants())
 	DrawPlayer(r, simData.Player)
 	DrawCharacters(r, simData.Characters)
 	rl.EndMode2D()
@@ -62,7 +62,7 @@ func (r *Renderer) DrawUI(simData *sim.Sim) {
 		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterIndex])
 	}
 	if simData.UI.SelectedPlantIndex != -1 {
-		DrawPlantDetails(r, &simData.Plants[simData.UI.SelectedPlantIndex])
+		DrawPlantDetails(r, simData.GetPlantByID(simData.UI.SelectedPlantIndex))
 	}
 
 	// Draw console if open

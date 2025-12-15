@@ -18,15 +18,17 @@ func (sim *Sim) InitPlants() {
 }
 
 func (sim *Sim) UpdatePlants() {
-	for i := range sim.Plants {
-		sim.Update(&sim.Plants[i])
+	if sim.PlantManager == nil {
+		return
 	}
+	sim.PlantManager.ForEach(func(id int, p *Plant) {
+		sim.Update(p)
+	})
 }
 
 func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantType) {
 	plant, _ := data.GetPlantDefinition(int(plantType), variant)
 	newPlant := Plant{
-		ID:         getNextID(),
 		Position:   position,
 		PlantType:  plantType,
 		GrowthRate: plant.GrowthRate,
@@ -37,7 +39,7 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 			ProductionRate:  plant.Produces.ProductionRate,
 		},
 	}
-	sim.Plants = append(sim.Plants, newPlant)
+	sim.PlantManager.addPlant(newPlant)
 }
 
 func (sim *Sim) Update(plant *Plant) {
@@ -63,10 +65,5 @@ func (sim *Sim) Update(plant *Plant) {
 }
 
 func (sim *Sim) RemovePlantById(id int) {
-	for i, plant := range sim.Plants {
-		if plant.ID == id {
-			sim.Plants = append(sim.Plants[:i], sim.Plants[i+1:]...)
-			return
-		}
-	}
+	sim.PlantManager.removePlant(id)
 }

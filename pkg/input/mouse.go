@@ -25,8 +25,9 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 				break
 			}
 		}
-		for _, plant := range m.sim.Plants {
+		for _, plant := range m.sim.GetPlants() {
 			if plant.Position.X == tilePosition.X && plant.Position.Y == tilePosition.Y {
+				// store the plant ID in SelectedPlantIndex
 				m.SelectPlant(plant.ID)
 				break
 			}
