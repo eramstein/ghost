@@ -52,9 +52,9 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
 		},
 		Needs: Needs{
-			Food:  80,
-			Water: 99,
-			Sleep: 0,
+			Food:  90,
+			Water: 0,
+			Sleep: 99,
 		},
 	}
 	sim.Characters = append(sim.Characters, character)

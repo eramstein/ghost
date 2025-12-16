@@ -17,39 +17,19 @@ func DrawCharacters(renderer *Renderer, characters []sim.Character) {
 	}
 }
 
-func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
+// DrawCharacterDetails renders character info starting at (x, y) and returns
+// the updated y position after drawing.
+func DrawCharacterDetails(renderer *Renderer, character *sim.Character, x, y int) int {
 	if character == nil {
-		return
+		return y
 	}
-
-	screenWidth := float32(rl.GetScreenWidth())
-	screenHeight := float32(rl.GetScreenHeight())
-
-	// Panel dimensions
-	panelWidth := int32(300)
-	panelX := int32(screenWidth) - panelWidth
-	panelY := int32(0)
-	panelHeight := int32(screenHeight)
-
-	// Panel background (semi-transparent dark overlay)
-	rl.DrawRectangle(panelX, panelY, panelWidth, panelHeight, rl.NewColor(20, 25, 30, 240))
-
-	// Panel border
-	rl.DrawRectangleLines(panelX, panelY, panelWidth, panelHeight, ColorBorder)
 
 	// Text settings
 	lineHeight := int32(renderer.DefaultFont.BaseSize + 6)
-	padding := int32(10)
-	x := int(panelX + padding)
-	y := int(panelY + padding)
 
 	// Title - Character Name
 	titleText := character.Name
 	renderer.RenderTextWithColor(titleText, x, y, rl.NewColor(255, 255, 255, 255))
-	y += int(lineHeight) + 5
-
-	// Separator line
-	rl.DrawLine(int32(x), int32(y), panelX+panelWidth-padding, int32(y), ColorBorder)
 	y += int(lineHeight)
 
 	// ID
@@ -156,4 +136,6 @@ func DrawCharacterDetails(renderer *Renderer, character *sim.Character) {
 			}
 		}
 	}
+
+	return y
 }

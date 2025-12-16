@@ -15,6 +15,7 @@ const (
 func (sim *Sim) InitPlants() {
 	// apple tree
 	sim.SpawnPlant(TilePosition{X: 1, Y: 3}, 0, PlantTypeTree)
+	sim.SpawnPlant(TilePosition{X: 5, Y: 5}, 0, PlantTypeTree)
 }
 
 func (sim *Sim) UpdatePlants() {

@@ -24,31 +24,15 @@ func DrawPlants(renderer *Renderer, plants []sim.Plant) {
 	}
 }
 
-func DrawPlantDetails(renderer *Renderer, plant *sim.Plant) {
+// DrawPlantDetails renders plant info starting at (x, y) and returns
+// the updated y position after drawing.
+func DrawPlantDetails(renderer *Renderer, plant *sim.Plant, x, y int) int {
 	if plant == nil {
-		return
+		return y
 	}
-
-	screenWidth := float32(rl.GetScreenWidth())
-	screenHeight := float32(rl.GetScreenHeight())
-
-	// Panel dimensions
-	panelWidth := int32(300)
-	panelX := int32(screenWidth) - panelWidth
-	panelY := int32(0)
-	panelHeight := int32(screenHeight)
-
-	// Panel background (semi-transparent dark overlay)
-	rl.DrawRectangle(panelX, panelY, panelWidth, panelHeight, rl.NewColor(20, 25, 30, 240))
-
-	// Panel border
-	rl.DrawRectangleLines(panelX, panelY, panelWidth, panelHeight, ColorBorder)
 
 	// Text settings
 	lineHeight := int32(renderer.DefaultFont.BaseSize + 6)
-	padding := int32(10)
-	x := int(panelX + padding)
-	y := int(panelY + padding)
 
 	// Title - Plant Name (from data definition if available)
 	titleText := "Plant"
@@ -56,10 +40,6 @@ func DrawPlantDetails(renderer *Renderer, plant *sim.Plant) {
 		titleText = def.Name
 	}
 	renderer.RenderTextWithColor(titleText, x, y, rl.NewColor(255, 255, 255, 255))
-	y += int(lineHeight) + 5
-
-	// Separator line
-	rl.DrawLine(int32(x), int32(y), panelX+panelWidth-padding, int32(y), ColorBorder)
 	y += int(lineHeight)
 
 	// ID, type & variant
@@ -94,4 +74,6 @@ func DrawPlantDetails(renderer *Renderer, plant *sim.Plant) {
 	renderer.RenderTextWithColor(fmt.Sprintf("  Stage: %d%%", plant.Produces.ProductionStage), x, y, rl.NewColor(200, 200, 200, 255))
 	y += int(lineHeight)
 	renderer.RenderTextWithColor(fmt.Sprintf("  Rate: %d / update", plant.Produces.ProductionRate), x, y, rl.NewColor(200, 200, 200, 255))
+
+	return y
 }

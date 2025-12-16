@@ -58,12 +58,9 @@ func (r *Renderer) DrawUI(simData *sim.Sim) {
 		tileTypeText := "Tile Type: " + simData.UI.EditorTileType.String()
 		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
 	}
-	if simData.UI.SelectedCharacterIndex != -1 {
-		DrawCharacterDetails(r, &simData.Characters[simData.UI.SelectedCharacterIndex])
-	}
-	if simData.UI.SelectedPlantIndex != -1 {
-		DrawPlantDetails(r, simData.GetPlantByID(simData.UI.SelectedPlantIndex))
-	}
+
+	// Unified side panel with stacked tile/character/plant details
+	DrawSidePanel(r, simData)
 
 	// Draw console if open
 	if r.Console != nil && r.Console.IsOpen() {
