@@ -49,7 +49,8 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
 	closedSet := make(map[string]bool)
-	openSetMap := make(map[string]*Node) // Map for O(1) lookup of nodes in open set
+	openSetMap := make(map[string]*Node)  // Map for O(1) lookup of nodes in open set
+	allNodesMap := make(map[string]*Node) // Map of ALL nodes we've seen (open + closed) for G comparison
 
 	// Create start node
 	startNode := &Node{
@@ -62,8 +63,10 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 	startNode.F = startNode.G + startNode.H
 
 	// Add start node to open set
+	startKey := getNodeKey(startNode.X, startNode.Y)
 	heap.Push(openSet, startNode)
-	openSetMap[getNodeKey(startNode.X, startNode.Y)] = startNode
+	openSetMap[startKey] = startNode
+	allNodesMap[startKey] = startNode
 
 	// Main A* loop
 	for openSet.Len() > 0 {
@@ -113,11 +116,7 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 				continue
 			}
 
-			// Skip if neighbor is in closed set
 			neighborKey := getNodeKey(newX, newY)
-			if closedSet[neighborKey] {
-				continue
-			}
 
 			// Calculate movement cost based on direction (diagonal vs orthogonal)
 			var movementMultiplier float64
@@ -130,11 +129,53 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 			}
 
 			// Calculate new G cost
-			newG := current.G + float64(moveCost)*movementMultiplier
+			// If moveCost is 0.0, use movementMultiplier as minimum cost to ensure paths accumulate cost
+			tileCost := float64(moveCost)
+			if tileCost <= 0.0 {
+				tileCost = movementMultiplier
+			} else {
+				tileCost *= movementMultiplier
+			}
+			newG := current.G + tileCost
 
-			// Check if node already exists in open set
-			existingNode, exists := openSetMap[neighborKey]
-			if !exists {
+			// Check if we've seen this node before (open or closed)
+			seenNode, seenBefore := allNodesMap[neighborKey]
+
+			if seenBefore {
+				// We've seen this node - check if new path is better
+				// Use small epsilon to handle floating point precision
+				if newG < seenNode.G-0.0001 {
+					// Found a better path - update the node
+					seenNode.Parent = current
+					seenNode.G = newG
+					seenNode.MoveCost = moveCost
+					seenNode.F = seenNode.G + seenNode.H
+
+					if closedSet[neighborKey] {
+						// Node was closed - reopen it (heuristic was misleading)
+						delete(closedSet, neighborKey)
+						heap.Push(openSet, seenNode)
+						openSetMap[neighborKey] = seenNode
+					} else {
+						// Node is in open set - remove, update, re-insert for reliable heap ordering
+						// Find and remove from heap
+						for i := 0; i < openSet.Len(); i++ {
+							if (*openSet)[i] == seenNode {
+								// Remove by swapping with last and truncating
+								openSet.Swap(i, openSet.Len()-1)
+								*openSet = (*openSet)[:openSet.Len()-1]
+								// Fix heap from position we modified (if not last element)
+								if i < openSet.Len() {
+									heap.Fix(openSet, i)
+								}
+								break
+							}
+						}
+						// Re-insert with updated F value
+						heap.Push(openSet, seenNode)
+					}
+				}
+			} else {
 				// New node, add to open set
 				neighbor := &Node{
 					X:        newX,
@@ -147,21 +188,7 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 				neighbor.F = neighbor.G + neighbor.H
 				heap.Push(openSet, neighbor)
 				openSetMap[neighborKey] = neighbor
-			} else if newG < existingNode.G {
-				// Found a better path to existing node, update it
-				// Update parent FIRST to ensure path reconstruction works correctly
-				existingNode.Parent = current
-				existingNode.G = newG
-				existingNode.MoveCost = moveCost
-				// H doesn't change (it's based on distance to goal), but recalculate F
-				existingNode.F = existingNode.G + existingNode.H
-				// Find the index and fix the heap to maintain priority order
-				for i, node := range *openSet {
-					if node == existingNode {
-						heap.Fix(openSet, i)
-						break
-					}
-				}
+				allNodesMap[neighborKey] = neighbor
 			}
 		}
 	}

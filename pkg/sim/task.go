@@ -114,7 +114,7 @@ func (sim *Sim) GetNextEatingTask(character *Character, objective *Objective) (t
 			TargetItem: itemInInventory,
 		}
 		// If the character is on a tile with a food item, add a task to eat it
-	} else if itemOnTile := sim.FindItemInTile(character.TilePosition.X, character.TilePosition.Y, ItemTypeFood, -1, false); itemOnTile != nil {
+	} else if itemOnTile := sim.FindItemInTile(character.ID, character.TilePosition, ItemTypeFood, -1, true); itemOnTile != nil {
 		// claim item
 		itemOnTile.OwnedBy = character.ID
 		// eat it
@@ -125,7 +125,7 @@ func (sim *Sim) GetNextEatingTask(character *Character, objective *Objective) (t
 		}
 	} else {
 		// If no food on tile, find the closest food item and add a task to go to it
-		closestItem := sim.ScanForItem(character.TilePosition, config.RegionSize/2-1, ItemTypeFood, -1, true)
+		closestItem := sim.ScanForItem(character.ID, character.TilePosition, config.RegionSize/2-1, ItemTypeFood, -1, true)
 		if closestItem != nil {
 			// claim item
 			closestItem.OwnedBy = character.ID

@@ -12,34 +12,34 @@ func (sim *Sim) InitCharacters() {
 		X: 5,
 		Y: 5,
 	})
-	// sim.MakeCharacter("Emma", TilePosition{
-	// 	X: 11,
-	// 	Y: 13,
-	// })
-	// sim.MakeCharacter("Lise", TilePosition{
-	// 	X: 11,
-	// 	Y: 14,
-	// })
-	// sim.MakeCharacter("Ousmane", TilePosition{
-	// 	X: 12,
-	// 	Y: 10,
-	// })
-	// sim.MakeCharacter("Molly", TilePosition{
-	// 	X: 12,
-	// 	Y: 12,
-	// })
-	// sim.MakeCharacter("Robert", TilePosition{
-	// 	X: 20,
-	// 	Y: 14,
-	// })
-	// sim.MakeCharacter("Didier", TilePosition{
-	// 	X: 20,
-	// 	Y: 10,
-	// })
-	// sim.MakeCharacter("Morgane", TilePosition{
-	// 	X: 20,
-	// 	Y: 12,
-	// })
+	sim.MakeCharacter("Emma", TilePosition{
+		X: 11,
+		Y: 13,
+	})
+	sim.MakeCharacter("Lise", TilePosition{
+		X: 11,
+		Y: 14,
+	})
+	sim.MakeCharacter("Ousmane", TilePosition{
+		X: 12,
+		Y: 10,
+	})
+	sim.MakeCharacter("Molly", TilePosition{
+		X: 12,
+		Y: 12,
+	})
+	sim.MakeCharacter("Robert", TilePosition{
+		X: 20,
+		Y: 14,
+	})
+	sim.MakeCharacter("Didier", TilePosition{
+		X: 20,
+		Y: 10,
+	})
+	sim.MakeCharacter("Morgane", TilePosition{
+		X: 20,
+		Y: 12,
+	})
 }
 
 func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
@@ -52,9 +52,9 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
 		},
 		Needs: Needs{
-			Food:  90,
+			Food:  99,
 			Water: 0,
-			Sleep: 99,
+			Sleep: 0,
 		},
 	}
 	sim.Characters = append(sim.Characters, character)

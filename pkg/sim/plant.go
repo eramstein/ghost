@@ -1,7 +1,6 @@
 package sim
 
 import (
-	"fmt"
 	"gociv/pkg/data"
 )
 
@@ -30,6 +29,7 @@ func (sim *Sim) UpdatePlants() {
 func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantType) {
 	plant, _ := data.GetPlantDefinition(int(plantType), variant)
 	newPlant := Plant{
+		Variant:    variant,
 		Position:   position,
 		PlantType:  plantType,
 		GrowthRate: plant.GrowthRate,
@@ -46,13 +46,11 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 func (sim *Sim) Update(plant *Plant) {
 	if plant.GrowthStage < 100 {
 		plant.GrowthStage += plant.GrowthRate
-		fmt.Printf("Plant growth: %d/%d\n", plant.GrowthRate, plant.GrowthStage)
 	}
 	if plant.GrowthStage >= 100 && plant.Produces.ProductionStage <= 100 {
 		plant.Produces.ProductionStage += plant.Produces.ProductionRate
 	}
 	if plant.Produces.ProductionStage >= 100 {
-		fmt.Printf("Plant produced: %v\n", plant.Produces)
 		plant.Produces.ProductionStage = 0
 		sim.AddItem(
 			Item{

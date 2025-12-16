@@ -94,6 +94,17 @@ func (im *ItemManager) getItem(id int) Item {
 	return im.items[id]
 }
 
+// getItemPtr returns a pointer to the item at the given ID, or nil if invalid.
+func (im *ItemManager) getItemPtr(id int) *Item {
+	if id < 0 || id >= len(im.items) {
+		return nil
+	}
+	if !im.usedSlots[id] {
+		return nil
+	}
+	return &im.items[id]
+}
+
 // UpdateItemLocation updates the location of an item.
 func (im *ItemManager) UpdateItemLocation(id int, location ItemLocation) error {
 	if id < 0 || id >= len(im.items) {
@@ -209,6 +220,9 @@ func (s *Sim) RemoveItem(id int) error {
 }
 func (s *Sim) GetItem(id int) Item {
 	return s.ItemManager.getItem(id)
+}
+func (s *Sim) GetItemPtr(id int) *Item {
+	return s.ItemManager.getItemPtr(id)
 }
 func (s *Sim) GetItems(itemType ItemType) []Item {
 	return s.ItemManager.getItems(itemType)
