@@ -90,18 +90,7 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 		closedSet[getNodeKey(current.X, current.Y)] = true
 
 		// Check all 8 neighbors
-		directions := [][2]int{
-			{0, 1},   // up
-			{1, 1},   // up-right
-			{1, 0},   // right
-			{1, -1},  // down-right
-			{0, -1},  // down
-			{-1, -1}, // down-left
-			{-1, 0},  // left
-			{-1, 1},  // up-left
-		}
-
-		for _, dir := range directions {
+		for _, dir := range EightDirections {
 			newX, newY := current.X+dir[0], current.Y+dir[1]
 
 			// Check bounds

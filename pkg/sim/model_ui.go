@@ -7,4 +7,5 @@ type UIState struct {
 	SelectedTileIndex      int
 	SelectedCharacterIndex int
 	SelectedPlantIndex     int
+	SelectedStructureIndex int
 }

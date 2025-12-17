@@ -1,14 +1,15 @@
 package sim
 
 type Sim struct {
-	Time         int // in minutes since the start of the simulation
-	Calendar     Calendar
-	UI           UIState
-	Player       Player
-	Tiles        []Tile
-	Characters   []Character
-	ItemManager  *ItemManager
-	PlantManager *PlantManager
+	Time             int // in minutes since the start of the simulation
+	Calendar         Calendar
+	UI               UIState
+	Player           Player
+	Tiles            []Tile
+	Characters       []Character
+	ItemManager      *ItemManager
+	PlantManager     *PlantManager
+	StructureManager *StructureManager
 }
 
 type Calendar struct {
@@ -113,4 +114,14 @@ type PlantProduction struct {
 	Variant         int
 	ProductionStage int // 0-100
 	ProductionRate  int // How many production stages per update
+}
+
+type Structure struct {
+	ID            int
+	Position      TilePosition
+	StructureType StructureType
+	Variant       int
+	Condition     int // 0-100
+	Owner         int // character id, -1 if not owned
+	BuildProgress int // 0-100
 }

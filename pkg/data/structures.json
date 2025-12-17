@@ -1,0 +1,28 @@
+{
+  "structures": [
+    {
+      "structureType": 0,
+      "variant": 0,
+      "name": "Well",
+      "description": "Well, it's a well for pulling water from the ground"
+    },
+    {
+      "structureType": 1,
+      "variant": 0,
+      "name": "Wooden Chair",
+      "description": "A simple wooden chair"
+    },
+    {
+      "structureType": 2,
+      "variant": 0,
+      "name": "Smithy",
+      "description": "A workshop for metalworking"
+    },
+    {
+      "structureType": 3,
+      "variant": 0,
+      "name": "Wooden Crate",
+      "description": "Basic storage container"
+    }
+  ]
+}

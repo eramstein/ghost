@@ -5,10 +5,11 @@ import (
 	"gociv/pkg/config"
 )
 
-// ScanForItem searches the closest item of a given type by looping tiles around a position
+// ScanForItem searches the closest reachable item of a given type using BFS
+// Only explores passable tiles, so it respects walls and obstacles
 // if variant is irrelevant pass -1
 func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance int, itemType ItemType, variant int, unclaimedOnly bool) *Item {
-	// Check current tile
+	// Check current tile first
 	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
 		tile := sim.GetTileAt(position)
 		for _, itemID := range tile.Items {
@@ -19,66 +20,69 @@ func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance 
 		}
 	}
 
-	// Check tiles further and further away until maxDistance
-	for distance := 1; distance <= maxDistance; distance++ {
-		// top row: y = position.Y - distance, must be in bounds
-		y := position.Y - distance
-		if y >= 0 && y < config.RegionSize {
-			// x = position.X + dx, must be in bounds: 0 <= position.X + dx < config.RegionSize
-			dxMin := max(-distance, -position.X)
-			dxMax := min(distance, config.RegionSize-1-position.X)
-			for dx := dxMin; dx <= dxMax; dx++ {
-				x := position.X + dx
-				item := sim.FindItemInTile(characterID, TilePosition{X: x, Y: y}, itemType, variant, unclaimedOnly)
+	// BFS: explore tiles in order of distance, only through passable tiles
+	visited := make(map[string]bool)
+	queue := []TilePosition{position}
+	visited[getPositionKey(position)] = true
+
+	distance := 0
+	// Process level by level to track distance
+	levelStart := 0
+	levelEnd := len(queue)
+
+	for levelStart < len(queue) && distance < maxDistance {
+		// Process all tiles at current distance level
+		for i := levelStart; i < levelEnd; i++ {
+			current := queue[i]
+
+			// Check all neighbors
+			for _, dir := range EightDirections {
+				newX, newY := current.X+dir[0], current.Y+dir[1]
+
+				// Check bounds
+				if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
+					continue
+				}
+
+				// Check if already visited
+				key := getPositionKey(TilePosition{X: newX, Y: newY})
+				if visited[key] {
+					continue
+				}
+
+				// Check if tile is passable
+				tileIndex := newY*config.RegionSize + newX
+				if sim.Tiles[tileIndex].MoveCost == ImpassableCost {
+					// Mark as visited but don't explore further
+					visited[key] = true
+					continue
+				}
+
+				// Mark as visited and add to queue
+				visited[key] = true
+				neighborPos := TilePosition{X: newX, Y: newY}
+				queue = append(queue, neighborPos)
+
+				// Check for items in this tile
+				item := sim.FindItemInTile(characterID, neighborPos, itemType, variant, unclaimedOnly)
 				if item != nil {
 					return item
 				}
 			}
 		}
-		// bottom row: y = position.Y + distance, must be in bounds
-		y = position.Y + distance
-		if y >= 0 && y < config.RegionSize {
-			// x = position.X + dx, must be in bounds: 0 <= position.X + dx < config.RegionSize
-			dxMin := max(-distance, -position.X)
-			dxMax := min(distance, config.RegionSize-1-position.X)
-			for dx := dxMin; dx <= dxMax; dx++ {
-				x := position.X + dx
-				item := sim.FindItemInTile(characterID, TilePosition{X: x, Y: y}, itemType, variant, unclaimedOnly)
-				if item != nil {
-					return item
-				}
-			}
-		}
-		// left row: x = position.X - distance, must be in bounds
-		x := position.X - distance
-		if x >= 0 && x < config.RegionSize {
-			// y = position.Y + dy, must be in bounds: 0 <= position.Y + dy < config.RegionSize
-			dyMin := max(-distance, -position.Y)
-			dyMax := min(distance, config.RegionSize-1-position.Y)
-			for dy := dyMin; dy <= dyMax; dy++ {
-				y := position.Y + dy
-				item := sim.FindItemInTile(characterID, TilePosition{X: x, Y: y}, itemType, variant, unclaimedOnly)
-				if item != nil {
-					return item
-				}
-			}
-		}
-		// right row: x = position.X + distance, must be in bounds
-		x = position.X + distance
-		if x >= 0 && x < config.RegionSize {
-			// y = position.Y + dy, must be in bounds: 0 <= position.Y + dy < config.RegionSize
-			dyMin := max(-distance, -position.Y)
-			dyMax := min(distance, config.RegionSize-1-position.Y)
-			for dy := dyMin; dy <= dyMax; dy++ {
-				y := position.Y + dy
-				item := sim.FindItemInTile(characterID, TilePosition{X: x, Y: y}, itemType, variant, unclaimedOnly)
-				if item != nil {
-					return item
-				}
-			}
-		}
+
+		// Move to next distance level
+		distance++
+		levelStart = levelEnd
+		levelEnd = len(queue)
 	}
+
 	return nil
+}
+
+// getPositionKey returns a unique key for a position (helper function)
+func getPositionKey(pos TilePosition) string {
+	return fmt.Sprintf("%d,%d", pos.X, pos.Y)
 }
 
 func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType ItemType, variant int, unclaimedOnly bool) *Item {

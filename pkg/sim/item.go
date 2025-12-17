@@ -20,7 +20,11 @@ const (
 
 func (sim *Sim) InitItems() {
 	fmt.Printf("Initializing items\n")
-	location := ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 1, Y: 1}}
+	location := ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 7, Y: 7}}
+	for i := 0; i < 8; i++ {
+		sim.AddItem(Item{Type: ItemTypeFood, Efficiency: 30}, location)
+	}
+	location = ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 30, Y: 5}}
 	for i := 0; i < 8; i++ {
 		sim.AddItem(Item{Type: ItemTypeFood, Efficiency: 30}, location)
 	}

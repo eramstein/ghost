@@ -6,6 +6,19 @@ import (
 	"math"
 )
 
+// EightDirections represents all 8-directional movement (orthogonal + diagonal)
+// Used for pathfinding, BFS searches, and other tile exploration algorithms
+var EightDirections = [][2]int{
+	{0, 1},   // up
+	{1, 1},   // up-right
+	{1, 0},   // right
+	{1, -1},  // down-right
+	{0, -1},  // down
+	{-1, -1}, // down-left
+	{-1, 0},  // left
+	{-1, 1},  // up-left
+}
+
 func (sim *Sim) advanceToNextTile(c *Character, nextTile TilePosition, nextTileWorldPosition WorldPosition) {
 	c.WorldPosition = nextTileWorldPosition
 	c.Path = c.Path[1:]

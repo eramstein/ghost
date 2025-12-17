@@ -8,7 +8,7 @@ import (
 )
 
 // DrawSidePanel renders a single side panel on the right of the screen and,
-// if present, shows details about the selected tile, character and plant
+// if present, shows details about the selected tile, character, plant and structure
 // stacked one below the other.
 func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 	hasTile := simData.UI.SelectedTileIndex != -1 &&
@@ -18,9 +18,10 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 		simData.UI.SelectedCharacterIndex >= 0 &&
 		simData.UI.SelectedCharacterIndex < len(simData.Characters)
 	hasPlant := simData.UI.SelectedPlantIndex != -1 && simData.PlantManager != nil
+	hasStructure := simData.UI.SelectedStructureIndex != -1 && simData.StructureManager != nil
 
 	// Nothing selected: don't draw a panel at all.
-	if !hasTile && !hasCharacter && !hasPlant {
+	if !hasTile && !hasCharacter && !hasPlant && !hasStructure {
 		return
 	}
 
@@ -89,6 +90,15 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 		if plant != nil {
 			drawSectionSeparator()
 			y = DrawPlantDetails(renderer, plant, x, y)
+		}
+	}
+
+	// Structure details
+	if hasStructure {
+		structure := simData.GetStructureByID(simData.UI.SelectedStructureIndex)
+		if structure != nil {
+			drawSectionSeparator()
+			y = DrawStructureDetails(renderer, structure, x, y)
 		}
 	}
 }

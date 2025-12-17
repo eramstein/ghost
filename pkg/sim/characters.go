@@ -52,8 +52,8 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
 		},
 		Needs: Needs{
-			Food:  99,
-			Water: 0,
+			Food:  0,
+			Water: 99,
 			Sleep: 0,
 		},
 	}

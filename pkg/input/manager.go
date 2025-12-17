@@ -32,8 +32,8 @@ func (m *Manager) HandleInputs(deltaTime float32) {
 	if rl.IsKeyPressed(rl.KeyF11) {
 		m.console.Toggle()
 	}
-	// F12 - Toggle EditMode
-	if rl.IsKeyPressed(rl.KeyF12) {
+	// F10 - Toggle EditMode
+	if rl.IsKeyPressed(rl.KeyF10) {
 		m.sim.UI.EditMode = !m.sim.UI.EditMode
 	}
 

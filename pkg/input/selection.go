@@ -13,8 +13,14 @@ func (m *Manager) SelectPlant(plantID int) {
 	m.sim.UI.SelectedPlantIndex = plantID
 }
 
+// SelectStructure takes a structure ID (managed by StructureManager) rather than a slice index.
+func (m *Manager) SelectStructure(structureID int) {
+	m.sim.UI.SelectedStructureIndex = structureID
+}
+
 func (m *Manager) ClearSelections() {
 	m.sim.UI.SelectedTileIndex = -1
 	m.sim.UI.SelectedCharacterIndex = -1
 	m.sim.UI.SelectedPlantIndex = -1
+	m.sim.UI.SelectedStructureIndex = -1
 }

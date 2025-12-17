@@ -59,14 +59,6 @@ func LoadPlantDefinitions() error {
 	return nil
 }
 
-// LoadAllData loads all game data files
-func LoadAllData() error {
-	if err := LoadPlantDefinitions(); err != nil {
-		return fmt.Errorf("failed to load plant definitions: %w", err)
-	}
-	return nil
-}
-
 // GetPlantDefinition retrieves a plant definition by type and variant
 func GetPlantDefinition(plantType int, variant int) (*PlantDefinition, bool) {
 	if PlantDefinitionsMap == nil {

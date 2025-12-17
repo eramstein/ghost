@@ -32,6 +32,13 @@ func (m *Manager) HandleMouse(deltaTime float32) {
 				break
 			}
 		}
+		for _, structure := range m.sim.GetStructures() {
+			if structure.Position.X == tilePosition.X && structure.Position.Y == tilePosition.Y {
+				// store the structure ID in SelectedStructureIndex
+				m.SelectStructure(structure.ID)
+				break
+			}
+		}
 	}
 
 	if rl.IsMouseButtonPressed(rl.MouseRightButton) && !m.sim.UI.EditMode {
