@@ -105,7 +105,7 @@ func (sim *Sim) Drink(character *Character) {
 	task := character.CurrentTask
 	position := task.TargetTile
 	tile := sim.GetTileAt(*position)
-	if tile.Type != TileTypeWater {
+	if tile.Type != TileTypeWater && sim.FindStructureInTile(character.ID, *position, Well, -1, true) == nil {
 		return
 	}
 	task.Progress += 50

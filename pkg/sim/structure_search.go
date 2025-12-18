@@ -1,0 +1,108 @@
+package sim
+
+import "gociv/pkg/config"
+
+// ScanForStructure searches the closest reachable structure using BFS.
+// Only explores passable tiles, so it respects walls and obstacles.
+//
+// Sentinel values:
+// - structureType: pass StructureType(-1) for any
+// - variant: pass -1 for any
+// - if unclaimedOnly is true, only returns structures that are unowned (-1) or owned by characterID
+func (sim *Sim) ScanForStructure(characterID int, position TilePosition, maxDistance int, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
+	// Check current tile first
+	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
+		if s := sim.FindStructureInTile(characterID, position, structureType, variant, unclaimedOnly); s != nil {
+			return s
+		}
+	}
+
+	// BFS: explore tiles in order of distance, only through passable tiles
+	visited := make(map[string]bool)
+	queue := []TilePosition{position}
+	visited[getPositionKey(position)] = true
+
+	distance := 0
+	// Process level by level to track distance
+	levelStart := 0
+	levelEnd := len(queue)
+
+	for levelStart < len(queue) && distance < maxDistance {
+		// Process all tiles at current distance level
+		for i := levelStart; i < levelEnd; i++ {
+			current := queue[i]
+
+			// Check all neighbors
+			for _, dir := range EightDirections {
+				newX, newY := current.X+dir[0], current.Y+dir[1]
+
+				// Check bounds
+				if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
+					continue
+				}
+
+				// Check if already visited
+				key := getPositionKey(TilePosition{X: newX, Y: newY})
+				if visited[key] {
+					continue
+				}
+
+				// Check if tile is passable
+				tileIndex := newY*config.RegionSize + newX
+				if sim.Tiles[tileIndex].MoveCost == ImpassableCost {
+					// Mark as visited but don't explore further
+					visited[key] = true
+					continue
+				}
+
+				// Mark as visited and add to queue
+				visited[key] = true
+				neighborPos := TilePosition{X: newX, Y: newY}
+				queue = append(queue, neighborPos)
+
+				// Check for structures in this tile
+				if s := sim.FindStructureInTile(characterID, neighborPos, structureType, variant, unclaimedOnly); s != nil {
+					return s
+				}
+			}
+		}
+
+		// Move to next distance level
+		distance++
+		levelStart = levelEnd
+		levelEnd = len(queue)
+	}
+
+	return nil
+}
+
+func (sim *Sim) FindStructureInTile(characterID int, position TilePosition, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
+	if sim.StructureManager == nil {
+		return nil
+	}
+
+	anyType := int(structureType) == -1
+
+	sm := sim.StructureManager
+	for id := range sm.structures {
+		if !sm.usedSlots[id] {
+			continue
+		}
+		s := &sm.structures[id]
+		if s.Position != position {
+			continue
+		}
+		if !anyType && s.StructureType != structureType {
+			continue
+		}
+		if variant != -1 && s.Variant != variant {
+			continue
+		}
+		if unclaimedOnly && s.Owner != -1 && s.Owner != characterID {
+			continue
+		}
+		return s
+	}
+
+	return nil
+}

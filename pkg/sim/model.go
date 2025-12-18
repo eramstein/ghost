@@ -49,10 +49,11 @@ type Character struct {
 }
 
 type Tile struct {
-	Type     TileType
-	Position TilePosition
-	MoveCost MoveCost
-	Items    []int
+	Type       TileType
+	Position   TilePosition
+	MoveCost   MoveCost
+	Items      []int
+	Structures []int
 }
 
 type WorldPosition struct {
@@ -106,10 +107,10 @@ type Plant struct {
 	Variant     int
 	GrowthStage int // 0-100
 	GrowthRate  int // How many growth stages per update
-	Produces    PlantProduction
+	Produces    Production
 }
 
-type PlantProduction struct {
+type Production struct {
 	Type            ItemType
 	Variant         int
 	ProductionStage int // 0-100

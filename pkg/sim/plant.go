@@ -33,7 +33,7 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 		Position:   position,
 		PlantType:  plantType,
 		GrowthRate: plant.GrowthRate,
-		Produces: PlantProduction{
+		Produces: Production{
 			Type:            ItemType(plant.Produces.Type),
 			Variant:         plant.Produces.Variant,
 			ProductionStage: 99,

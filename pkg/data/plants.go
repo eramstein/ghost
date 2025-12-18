@@ -8,15 +8,15 @@ import (
 
 // PlantDefinition represents a plant configuration loaded from JSON
 type PlantDefinition struct {
-	PlantType  int                `json:"plantType"`
-	Variant    int                `json:"variant"`
-	Name       string             `json:"name"`
-	GrowthRate int                `json:"growthRate"`
-	Produces   PlantProductionDef `json:"produces"`
+	PlantType  int           `json:"plantType"`
+	Variant    int           `json:"variant"`
+	Name       string        `json:"name"`
+	GrowthRate int           `json:"growthRate"`
+	Produces   ProductionDef `json:"produces"`
 }
 
-// PlantProductionDef represents what a plant produces
-type PlantProductionDef struct {
+// ProductionDef represents what a plant produces
+type ProductionDef struct {
 	Type           int `json:"type"`
 	Variant        int `json:"variant"`
 	ProductionRate int `json:"productionRate"`

@@ -145,7 +145,13 @@ func (sim *Sim) GetNextEatingTask(character *Character, objective *Objective) (t
 func (sim *Sim) GetNextDrinkingTask(character *Character, objective *Objective) (task *Task) {
 	var newTask *Task
 	// Go to the closest water tile if needed, then drink
-	closestWater := sim.ScanForTile(character.TilePosition, config.RegionSize/2-1, TileTypeWater)
+	var closestWater *TilePosition
+	closestWell := sim.ScanForStructure(character.ID, character.TilePosition, config.RegionSize/2-1, Well, -1, true)
+	if closestWell != nil {
+		closestWater = &closestWell.Position
+	} else {
+		closestWater = sim.ScanForTile(character.TilePosition, config.RegionSize/2-1, TileTypeWater)
+	}
 	fmt.Printf("closestWater: %v\n", closestWater)
 	if closestWater == nil {
 		return

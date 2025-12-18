@@ -177,6 +177,43 @@ func (sim *Sim) GetStructures() []Structure {
 	return sim.StructureManager.All()
 }
 
+// AddStructure adds a structure to the StructureManager and registers its ID on the corresponding tile.
+func (sim *Sim) AddStructure(structure Structure) int {
+	if sim.StructureManager == nil {
+		sim.StructureManager = NewStructureManager()
+	}
+
+	id := sim.StructureManager.AddStructure(structure)
+
+	// Register on tile
+	tile := sim.GetTileAt(structure.Position)
+	// Avoid duplicates if caller re-adds
+	for _, existing := range tile.Structures {
+		if existing == id {
+			return id
+		}
+	}
+	tile.Structures = append(tile.Structures, id)
+
+	return id
+}
+
+// RemoveStructure removes a structure from the StructureManager and unregisters its ID from the corresponding tile.
+func (sim *Sim) RemoveStructure(id int) {
+	if sim.StructureManager == nil {
+		return
+	}
+
+	// Capture position before removal
+	s, ok := sim.StructureManager.GetStructure(id)
+	if ok {
+		tile := sim.GetTileAt(s.Position)
+		tile.Structures = removeInt(tile.Structures, id)
+	}
+
+	sim.StructureManager.RemoveStructure(id)
+}
+
 // GetStructureByID returns a structure pointer for a given ID, or nil if not found.
 func (sim *Sim) GetStructureByID(id int) *Structure {
 	if sim.StructureManager == nil {
@@ -187,4 +224,14 @@ func (sim *Sim) GetStructureByID(id int) *Structure {
 		return nil
 	}
 	return s
+}
+
+func removeInt(slice []int, value int) []int {
+	for i, v := range slice {
+		if v == value {
+			// preserve order
+			return append(slice[:i], slice[i+1:]...)
+		}
+	}
+	return slice
 }

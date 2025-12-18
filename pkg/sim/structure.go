@@ -3,14 +3,14 @@ package sim
 type StructureType int
 
 const (
-	Extractor StructureType = iota
+	Well StructureType = iota
 	Furniture
 	Workshop
 	Storage
 )
 
 func (sim *Sim) InitStructures() {
-	sim.SpawnStructure(TilePosition{X: 2, Y: 2}, 0, Extractor)
+	sim.SpawnStructure(TilePosition{X: 21, Y: 15}, 0, Well)
 }
 
 func (sim *Sim) SpawnStructure(position TilePosition, variant int, structureType StructureType) {
@@ -22,5 +22,5 @@ func (sim *Sim) SpawnStructure(position TilePosition, variant int, structureType
 		Condition:     100,
 		Owner:         -1,
 	}
-	sim.StructureManager.AddStructure(newStructure)
+	sim.AddStructure(newStructure)
 }
