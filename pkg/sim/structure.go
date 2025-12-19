@@ -10,10 +10,6 @@ const (
 	Storage
 )
 
-func (sim *Sim) InitStructures() {
-	sim.SpawnStructure(TilePosition{X: 21, Y: 15}, Well)
-}
-
 func (sim *Sim) SpawnStructure(position TilePosition, structureType StructureType) {
 	newStructure := Structure{
 		Position:      position,

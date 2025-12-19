@@ -49,14 +49,8 @@ func (r *Renderer) Render(simData *sim.Sim) {
 func (r *Renderer) DrawUI(simData *sim.Sim) {
 	DisplayTime(r, &simData.Calendar)
 
-	if simData.UI.EditMode {
-		// Draw EditMode indicator in top-left corner
-		rl.DrawText("EDIT MODE", 10, 10, 20, ColorEditMode)
-
-		// Draw current EditorTileType below EditMode indicator
-		tileTypeText := "Tile Type: " + simData.UI.EditorTileType.String()
-		rl.DrawText(tileTypeText, 10, 35, 16, ColorEditMode)
-	}
+	// Draw editor UI panel
+	DrawEditorUI(r, simData)
 
 	// Unified side panel with stacked tile/character/plant details
 	DrawSidePanel(r, simData)

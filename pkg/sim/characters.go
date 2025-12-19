@@ -8,38 +8,38 @@ import (
 const CHARACTER_SPEED = 100
 
 func (sim *Sim) InitCharacters() {
-	sim.MakeCharacter("Henry", TilePosition{
-		X: 5,
-		Y: 5,
-	})
-	sim.MakeCharacter("Emma", TilePosition{
-		X: 11,
-		Y: 13,
-	})
-	sim.MakeCharacter("Lise", TilePosition{
-		X: 11,
-		Y: 14,
-	})
-	sim.MakeCharacter("Ousmane", TilePosition{
-		X: 12,
-		Y: 10,
-	})
-	sim.MakeCharacter("Molly", TilePosition{
-		X: 12,
-		Y: 12,
-	})
-	sim.MakeCharacter("Robert", TilePosition{
-		X: 20,
-		Y: 14,
-	})
-	sim.MakeCharacter("Didier", TilePosition{
-		X: 20,
-		Y: 10,
-	})
-	sim.MakeCharacter("Morgane", TilePosition{
-		X: 20,
-		Y: 12,
-	})
+	// sim.MakeCharacter("Henry", TilePosition{
+	// 	X: 5,
+	// 	Y: 5,
+	// })
+	// sim.MakeCharacter("Emma", TilePosition{
+	// 	X: 11,
+	// 	Y: 13,
+	// })
+	// sim.MakeCharacter("Lise", TilePosition{
+	// 	X: 11,
+	// 	Y: 14,
+	// })
+	// sim.MakeCharacter("Ousmane", TilePosition{
+	// 	X: 12,
+	// 	Y: 10,
+	// })
+	// sim.MakeCharacter("Molly", TilePosition{
+	// 	X: 12,
+	// 	Y: 12,
+	// })
+	// sim.MakeCharacter("Robert", TilePosition{
+	// 	X: 20,
+	// 	Y: 14,
+	// })
+	// sim.MakeCharacter("Didier", TilePosition{
+	// 	X: 20,
+	// 	Y: 10,
+	// })
+	// sim.MakeCharacter("Morgane", TilePosition{
+	// 	X: 20,
+	// 	Y: 12,
+	// })
 }
 
 func (sim *Sim) MakeCharacter(name string, pos TilePosition) {

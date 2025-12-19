@@ -42,11 +42,19 @@ func LoadSim(filename string) (*sim.Sim, error) {
 	return &sim, nil
 }
 
-// SaveTiles saves only the Tiles data from a Sim to a file using gob encoding
-func SaveTiles(tiles []sim.Tile, filename string) error {
+// SaveRegion saves the complete region data (tiles, plants, structures) to a file using gob encoding
+func SaveRegion(s *sim.Sim, filename string) error {
 	// Set all Items to nil before saving
+	tiles := make([]sim.Tile, len(s.Tiles))
+	copy(tiles, s.Tiles)
 	for i := range tiles {
 		tiles[i].Items = nil
+	}
+
+	regionData := sim.RegionData{
+		Tiles:            tiles,
+		PlantManager:     s.PlantManager,
+		StructureManager: s.StructureManager,
 	}
 
 	file, err := os.Create(filename)
@@ -56,28 +64,10 @@ func SaveTiles(tiles []sim.Tile, filename string) error {
 	defer file.Close()
 
 	encoder := gob.NewEncoder(file)
-	err = encoder.Encode(tiles)
+	err = encoder.Encode(regionData)
 	if err != nil {
-		return fmt.Errorf("failed to encode tiles data: %w", err)
+		return fmt.Errorf("failed to encode region data: %w", err)
 	}
 
 	return nil
-}
-
-// LoadTiles loads only the Tiles data from a file using gob decoding
-func LoadTiles(filename string) ([]sim.Tile, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file %s: %w", filename, err)
-	}
-	defer file.Close()
-
-	var tiles []sim.Tile
-	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(&tiles)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode tiles data: %w", err)
-	}
-
-	return tiles, nil
 }

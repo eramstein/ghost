@@ -127,11 +127,11 @@ func (c *Console) handleSaveCommand(args []string) {
 		filename = args[0]
 	}
 
-	err := utils.SaveTiles(c.sim.Tiles, filename)
+	err := utils.SaveRegion(c.sim, filename)
 	if err != nil {
-		fmt.Printf("Error saving game: %v\n", err)
+		fmt.Printf("Error saving region: %v\n", err)
 	} else {
-		fmt.Printf("Game saved successfully to %s!\n", filename)
+		fmt.Printf("Region saved successfully to %s!\n", filename)
 	}
 }
 
@@ -142,13 +142,19 @@ func (c *Console) handleLoadCommand(args []string) {
 		filename = args[0]
 	}
 
-	loadedTiles, err := utils.LoadTiles(filename)
+	regionData, err := sim.LoadRegion(filename)
 	if err != nil {
-		fmt.Printf("Error loading game: %v\n", err)
+		fmt.Printf("Error loading region: %v\n", err)
 	} else {
-		// Replace current sim with loaded sim
-		c.sim.Tiles = loadedTiles
-		fmt.Printf("Game loaded successfully from %s!\n", filename)
+		// Replace current sim region data with loaded data
+		c.sim.Tiles = regionData.Tiles
+		if regionData.PlantManager != nil {
+			c.sim.PlantManager = regionData.PlantManager
+		}
+		if regionData.StructureManager != nil {
+			c.sim.StructureManager = regionData.StructureManager
+		}
+		fmt.Printf("Region loaded successfully from %s!\n", filename)
 	}
 }
 

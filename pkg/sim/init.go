@@ -1,17 +1,19 @@
 package sim
 
 func InitSim() *Sim {
+	// region includes plants and structures
+	regionData := InitRegion()
+
 	sim := Sim{
 		Player:           InitPlayer(),
-		Tiles:            InitRegion(),
-		UI:               UIState{EditMode: false, SelectedCharacterIndex: -1, SelectedPlantIndex: -1, SelectedTileIndex: -1, SelectedStructureIndex: -1},
+		Tiles:            regionData.Tiles,
+		UI:               UIState{EditMode: false, EditorMode: EditorModeTiles, EditorTileType: TileTypeEmpty, EditorPlantType: PlantTypeTree, EditorPlantVariant: 0, EditorStructureType: Well, SelectedCharacterIndex: -1, SelectedPlantIndex: -1, SelectedTileIndex: -1, SelectedStructureIndex: -1},
 		ItemManager:      NewItemManager(),
-		PlantManager:     NewPlantManager(),
-		StructureManager: NewStructureManager(),
+		PlantManager:     regionData.PlantManager,
+		StructureManager: regionData.StructureManager,
 	}
+
 	sim.InitItems()
 	sim.InitCharacters()
-	sim.InitPlants()
-	sim.InitStructures()
 	return &sim
 }

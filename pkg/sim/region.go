@@ -8,35 +8,72 @@ import (
 	"os"
 )
 
-func InitRegion() []Tile {
-	region := make([]Tile, config.RegionSize*config.RegionSize)
+// RegionData contains all region-related data (tiles, plants, structures)
+type RegionData struct {
+	Tiles            []Tile
+	PlantManager     *PlantManager
+	StructureManager *StructureManager
+}
 
-	filename := "tiles.gob"
+// RegionInitResult contains the loaded region data
+type RegionInitResult struct {
+	Tiles            []Tile
+	PlantManager     *PlantManager
+	StructureManager *StructureManager
+}
+
+// LoadRegion loads the complete region data (tiles, plants, structures) from a file using gob decoding
+func LoadRegion(filename string) (*RegionData, error) {
 	file, err := os.Open(filename)
-
-	// if no saved region data, initialize the region with empty tiles
 	if err != nil {
-		for i := range region {
-			region[i].Position = TilePosition{
-				X: i % config.RegionSize,
-				Y: i / config.RegionSize,
-			}
-			region[i].Structure = -1
-			region[i].Plant = -1
-		}
-		return region
+		return nil, fmt.Errorf("failed to open file %s: %w", filename, err)
 	}
 	defer file.Close()
 
-	// if saved region data, load it
+	var regionData RegionData
 	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(&region)
+	err = decoder.Decode(&regionData)
 	if err != nil {
-		return region
+		return nil, fmt.Errorf("failed to decode region data: %w", err)
+	}
+
+	return &regionData, nil
+}
+
+func InitRegion() RegionInitResult {
+	result := RegionInitResult{
+		Tiles:            make([]Tile, config.RegionSize*config.RegionSize),
+		PlantManager:     NewPlantManager(),
+		StructureManager: NewStructureManager(),
+	}
+
+	filename := "tiles.gob"
+	regionData, err := LoadRegion(filename)
+
+	// if no saved region data, initialize the region with empty tiles
+	if err != nil {
+		for i := range result.Tiles {
+			result.Tiles[i].Position = TilePosition{
+				X: i % config.RegionSize,
+				Y: i / config.RegionSize,
+			}
+			result.Tiles[i].Structure = -1
+			result.Tiles[i].Plant = -1
+		}
+		return result
+	}
+
+	// if saved region data, load it
+	result.Tiles = regionData.Tiles
+	if regionData.PlantManager != nil {
+		result.PlantManager = regionData.PlantManager
+	}
+	if regionData.StructureManager != nil {
+		result.StructureManager = regionData.StructureManager
 	}
 	fmt.Println("Loaded region from file")
 
-	return region
+	return result
 }
 
 func (s *Sim) GetTileAt(position TilePosition) *Tile {
