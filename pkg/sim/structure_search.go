@@ -95,9 +95,6 @@ func (sim *Sim) FindStructureInTile(characterID int, position TilePosition, stru
 		if !anyType && s.StructureType != structureType {
 			continue
 		}
-		if variant != -1 && s.Variant != variant {
-			continue
-		}
 		if unclaimedOnly && s.Owner != -1 && s.Owner != characterID {
 			continue
 		}

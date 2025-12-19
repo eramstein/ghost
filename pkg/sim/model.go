@@ -122,7 +122,6 @@ type Structure struct {
 	ID            int
 	Position      TilePosition
 	StructureType StructureType
-	Variant       int
 	Condition     int // 0-100
 	Owner         int // character id, -1 if not owned
 	BuildProgress int // 0-100

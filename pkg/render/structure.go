@@ -3,11 +3,28 @@ package render
 import (
 	"fmt"
 	"gociv/pkg/config"
-	"gociv/pkg/data"
 	"gociv/pkg/sim"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
+
+// structureTypeString converts StructureType to a readable string
+func structureTypeString(st sim.StructureType) string {
+	switch st {
+	case sim.Well:
+		return "Well"
+	case sim.Bed:
+		return "Bed"
+	case sim.Furniture:
+		return "Furniture"
+	case sim.Workshop:
+		return "Workshop"
+	case sim.Storage:
+		return "Storage"
+	default:
+		return fmt.Sprintf("Unknown (%d)", int(st))
+	}
+}
 
 func DrawStructure(renderer *Renderer, structure sim.Structure) {
 	centerX := float32(structure.Position.X*config.TileSize + config.TileSize/2)
@@ -27,11 +44,8 @@ func DrawStructureDetails(renderer *Renderer, structure *sim.Structure, x, y int
 	// Text settings
 	lineHeight := int32(renderer.DefaultFont.BaseSize + 6)
 
-	// Title - Structure Name (from data definition if available)
-	titleText := "Structure"
-	if def, ok := data.GetStructureDefinition(int(structure.StructureType), structure.Variant); ok && def != nil && def.Name != "" {
-		titleText = def.Name
-	}
+	// Title - Structure Type
+	titleText := structureTypeString(structure.StructureType)
 	renderer.RenderTextWithColor(titleText, x, y, rl.NewColor(255, 255, 255, 255))
 	y += int(lineHeight)
 
@@ -39,8 +53,6 @@ func DrawStructureDetails(renderer *Renderer, structure *sim.Structure, x, y int
 	renderer.RenderTextWithColor(fmt.Sprintf("ID: %d", structure.ID), x, y, rl.NewColor(200, 200, 200, 255))
 	y += int(lineHeight)
 	renderer.RenderTextWithColor(fmt.Sprintf("Type: %d", structure.StructureType), x, y, rl.NewColor(200, 200, 200, 255))
-	y += int(lineHeight)
-	renderer.RenderTextWithColor(fmt.Sprintf("Variant: %d", structure.Variant), x, y, rl.NewColor(200, 200, 200, 255))
 	y += int(lineHeight)
 
 	// Position
