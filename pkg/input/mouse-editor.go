@@ -32,19 +32,7 @@ func (m *Manager) HandleMouseEditor(deltaTime float32) {
 			// Add new plant
 			plantDef, ok := data.GetPlantDefinition(int(m.sim.UI.EditorPlantType), m.sim.UI.EditorPlantVariant)
 			if ok && plantDef != nil {
-				newPlant := sim.Plant{
-					Variant:    m.sim.UI.EditorPlantVariant,
-					Position:   tilePos,
-					PlantType:  m.sim.UI.EditorPlantType,
-					GrowthRate: plantDef.GrowthRate,
-					Produces: sim.Production{
-						Type:            sim.ItemType(plantDef.Produces.Type),
-						Variant:         plantDef.Produces.Variant,
-						ProductionStage: 99,
-						ProductionRate:  plantDef.Produces.ProductionRate,
-					},
-				}
-				plantID := m.sim.AddPlant(newPlant)
+				plantID := m.sim.SpawnPlant(tilePos, m.sim.UI.EditorPlantVariant, m.sim.UI.EditorPlantType)
 				fmt.Printf("Added plant (ID: %d, Type: %d, Variant: %d, Name: %s) at (%d, %d)\n",
 					plantID, m.sim.UI.EditorPlantType, m.sim.UI.EditorPlantVariant, plantDef.Name, tilePos.X, tilePos.Y)
 			} else {
@@ -58,14 +46,7 @@ func (m *Manager) HandleMouseEditor(deltaTime float32) {
 				m.sim.RemoveStructure(tile.Structure)
 			}
 			// Add new structure
-			newStructure := sim.Structure{
-				Position:      tilePos,
-				StructureType: m.sim.UI.EditorStructureType,
-				Condition:     100,
-				Owner:         -1,
-				BuildProgress: 100,
-			}
-			structureID := m.sim.AddStructure(newStructure)
+			structureID := m.sim.SpawnStructure(tilePos, m.sim.UI.EditorStructureType)
 			fmt.Printf("Added structure (ID: %d, Type: %d) at (%d, %d)\n",
 				structureID, m.sim.UI.EditorStructureType, tilePos.X, tilePos.Y)
 		}

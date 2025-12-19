@@ -20,7 +20,7 @@ func (sim *Sim) UpdatePlants() {
 	})
 }
 
-func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantType) {
+func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantType) int {
 	plant, _ := data.GetPlantDefinition(int(plantType), variant)
 	newPlant := Plant{
 		Variant:    variant,
@@ -34,7 +34,7 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 			ProductionRate:  plant.Produces.ProductionRate,
 		},
 	}
-	sim.AddPlant(newPlant)
+	return sim.AddPlant(newPlant)
 }
 
 func (sim *Sim) Update(plant *Plant) {

@@ -10,12 +10,13 @@ const (
 	Storage
 )
 
-func (sim *Sim) SpawnStructure(position TilePosition, structureType StructureType) {
+func (sim *Sim) SpawnStructure(position TilePosition, structureType StructureType) int {
 	newStructure := Structure{
 		Position:      position,
 		StructureType: structureType,
 		Condition:     100,
 		Owner:         -1,
+		BuildProgress: 100,
 	}
-	sim.AddStructure(newStructure)
+	return sim.AddStructure(newStructure)
 }

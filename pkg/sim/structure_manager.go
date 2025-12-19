@@ -105,6 +105,20 @@ func (sm *StructureManager) GetStructurePtr(id int) (*Structure, bool) {
 	return &sm.structures[id], true
 }
 
+// GetStructuresByOwnerAndType returns a slice of structure pointers matching the given owner ID and structure type.
+func (sm *StructureManager) GetStructuresByOwnerAndType(ownerID int, structureType StructureType) []*Structure {
+	result := make([]*Structure, 0)
+	for id := range sm.structures {
+		if sm.usedSlots[id] {
+			s := &sm.structures[id]
+			if s.Owner == ownerID && s.StructureType == structureType {
+				result = append(result, s)
+			}
+		}
+	}
+	return result
+}
+
 // ForEach calls fn for each existing structure.
 func (sm *StructureManager) ForEach(fn func(id int, s *Structure)) {
 	for id := range sm.structures {

@@ -8,10 +8,10 @@ import (
 const CHARACTER_SPEED = 100
 
 func (sim *Sim) InitCharacters() {
-	// sim.MakeCharacter("Henry", TilePosition{
-	// 	X: 5,
-	// 	Y: 5,
-	// })
+	sim.MakeCharacter("Henry", TilePosition{
+		X: 5,
+		Y: 5,
+	})
 	// sim.MakeCharacter("Emma", TilePosition{
 	// 	X: 11,
 	// 	Y: 13,
@@ -53,8 +53,8 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 		},
 		Needs: Needs{
 			Food:  0,
-			Water: 99,
-			Sleep: 0,
+			Water: 0,
+			Sleep: 99,
 		},
 	}
 	sim.Characters = append(sim.Characters, character)
@@ -85,45 +85,6 @@ func (character *Character) UpdateNeeds() {
 	character.Needs.Food++
 	character.Needs.Water++
 	character.Needs.Sleep++
-}
-
-func (sim *Sim) Eat(character *Character) {
-	task := character.CurrentTask
-	item := task.TargetItem
-	task.Progress += 10
-	fmt.Println("Eating", character.Name, item.Type, item.Efficiency)
-	if task.Progress >= 100 {
-		character.Needs.Food -= item.Efficiency
-		if character.Needs.Food < 0 {
-			character.Needs.Food = 0
-		}
-		sim.RemoveItem(item.ID)
-	}
-}
-
-func (sim *Sim) Drink(character *Character) {
-	task := character.CurrentTask
-	position := task.TargetTile
-	tile := sim.GetTileAt(*position)
-	if tile.Type != TileTypeWater && sim.FindStructureInTile(character.ID, *position, Well, -1, true) == nil {
-		return
-	}
-	task.Progress += 50
-	fmt.Println("Drinking", character.Name)
-	if task.Progress >= 100 {
-		character.Needs.Water = 0
-		task.Progress = 100
-	}
-}
-
-func (sim *Sim) Sleep(character *Character) {
-	task := character.CurrentTask
-	fmt.Println("Sleeping", character.Name)
-	character.Needs.Sleep -= 5
-	if character.Needs.Sleep <= 0 {
-		character.Needs.Sleep = 0
-		task.Progress = 100
-	}
 }
 
 func (sim *Sim) PickUp(character *Character) {
