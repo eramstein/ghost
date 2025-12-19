@@ -94,4 +94,16 @@ func DrawTile(renderer *Renderer, simData *sim.Sim, tile sim.Tile) {
 			ItemTypeColors[item.Type],
 		)
 	}
+
+	// structure
+	if tile.Structure != -1 {
+		structure := simData.GetStructureByID(tile.Structure)
+		DrawStructure(renderer, structure)
+	}
+
+	// plant
+	if tile.Plant != -1 {
+		plant := simData.GetPlantByID(tile.Plant)
+		DrawPlant(renderer, *plant)
+	}
 }

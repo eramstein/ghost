@@ -83,8 +83,8 @@ func (pm *PlantManager) removePlant(id int) {
 	pm.freeSlots = append(pm.freeSlots, id)
 }
 
-// getPlant returns the plant at the given ID and a bool indicating presence.
-func (pm *PlantManager) getPlant(id int) (Plant, bool) {
+// GetPlant returns the plant at the given ID and a bool indicating presence.
+func (pm *PlantManager) GetPlant(id int) (Plant, bool) {
 	if id < 0 || id >= len(pm.plants) {
 		return Plant{}, false
 	}
@@ -189,4 +189,35 @@ func (sim *Sim) GetPlantByID(id int) *Plant {
 		return nil
 	}
 	return p
+}
+
+// AddPlant adds a plant to the PlantManager and registers its ID on the corresponding tile.
+func (sim *Sim) AddPlant(plant Plant) int {
+	if sim.PlantManager == nil {
+		sim.PlantManager = NewPlantManager()
+	}
+
+	id := sim.PlantManager.addPlant(plant)
+
+	// Register on tile
+	tile := sim.GetTileAt(plant.Position)
+	tile.Plant = id
+
+	return id
+}
+
+// RemovePlant removes a plant from the PlantManager and unregisters its ID from the corresponding tile.
+func (sim *Sim) RemovePlant(id int) {
+	if sim.PlantManager == nil {
+		return
+	}
+
+	// Capture position before removal
+	p, ok := sim.PlantManager.GetPlant(id)
+	if ok {
+		tile := sim.GetTileAt(p.Position)
+		tile.Plant = -1
+	}
+
+	sim.PlantManager.removePlant(id)
 }

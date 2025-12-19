@@ -13,17 +13,22 @@ func InitRegion() []Tile {
 
 	filename := "tiles.gob"
 	file, err := os.Open(filename)
+
+	// if no saved region data, initialize the region with empty tiles
 	if err != nil {
 		for i := range region {
 			region[i].Position = TilePosition{
 				X: i % config.RegionSize,
 				Y: i / config.RegionSize,
 			}
+			region[i].Structure = -1
+			region[i].Plant = -1
 		}
 		return region
 	}
 	defer file.Close()
 
+	// if saved region data, load it
 	decoder := gob.NewDecoder(file)
 	err = decoder.Decode(&region)
 	if err != nil {

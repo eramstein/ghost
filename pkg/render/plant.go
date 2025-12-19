@@ -9,19 +9,17 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func DrawPlants(renderer *Renderer, plants []sim.Plant) {
-	for _, plant := range plants {
-		centerX := float32(plant.Position.X*config.TileSize + config.TileSize/2)
-		centerY := float32(plant.Position.Y*config.TileSize + config.TileSize/2)
-		size := float32(10)
+func DrawPlant(renderer *Renderer, plant sim.Plant) {
+	centerX := float32(plant.Position.X*config.TileSize + config.TileSize/2)
+	centerY := float32(plant.Position.Y*config.TileSize + config.TileSize/2)
+	size := float32(10)
 
-		// Create an upward-pointing triangle
-		v1 := rl.Vector2{X: centerX, Y: centerY - size}        // Top vertex
-		v2 := rl.Vector2{X: centerX - size, Y: centerY + size} // Bottom left
-		v3 := rl.Vector2{X: centerX + size, Y: centerY + size} // Bottom right
+	// Create an upward-pointing triangle
+	v1 := rl.Vector2{X: centerX, Y: centerY - size}        // Top vertex
+	v2 := rl.Vector2{X: centerX - size, Y: centerY + size} // Bottom left
+	v3 := rl.Vector2{X: centerX + size, Y: centerY + size} // Bottom right
 
-		rl.DrawTriangle(v1, v2, v3, ColorPlant)
-	}
+	rl.DrawTriangle(v1, v2, v3, ColorPlant)
 }
 
 // DrawPlantDetails renders plant info starting at (x, y) and returns

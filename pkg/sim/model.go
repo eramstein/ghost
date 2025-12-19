@@ -49,11 +49,12 @@ type Character struct {
 }
 
 type Tile struct {
-	Type       TileType
-	Position   TilePosition
-	MoveCost   MoveCost
-	Items      []int
-	Structures []int
+	Type      TileType
+	Position  TilePosition
+	MoveCost  MoveCost
+	Items     []int
+	Structure int // structure id, -1 if no structure
+	Plant     int // plant id, -1 if no plant
 }
 
 type WorldPosition struct {

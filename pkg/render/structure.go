@@ -9,15 +9,12 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func DrawStructures(renderer *Renderer, structures []sim.Structure) {
-	for _, structure := range structures {
-		centerX := float32(structure.Position.X*config.TileSize + config.TileSize/2)
-		centerY := float32(structure.Position.Y*config.TileSize + config.TileSize/2)
-		size := float32(config.TileSize) / 2
-		halfSize := size / 2
-
-		rl.DrawRectangle(int32(centerX-halfSize), int32(centerY-halfSize), int32(size), int32(size), ColorStructure)
-	}
+func DrawStructure(renderer *Renderer, structure sim.Structure) {
+	centerX := float32(structure.Position.X*config.TileSize + config.TileSize/2)
+	centerY := float32(structure.Position.Y*config.TileSize + config.TileSize/2)
+	size := float32(config.TileSize) / 2
+	halfSize := size / 2
+	rl.DrawRectangle(int32(centerX-halfSize), int32(centerY-halfSize), int32(size), int32(size), ColorStructure)
 }
 
 // DrawStructureDetails renders structure info starting at (x, y) and returns

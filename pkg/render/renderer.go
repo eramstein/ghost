@@ -37,8 +37,6 @@ func (r *Renderer) Render(simData *sim.Sim) {
 	rl.ClearBackground(ColorBackground)
 	rl.BeginMode2D(r.Camera)
 	DrawMap(r, simData)
-	DrawPlants(r, simData.GetPlants())
-	DrawStructures(r, simData.GetStructures())
 	DrawPlayer(r, simData.Player)
 	DrawCharacters(r, simData.Characters)
 	rl.EndMode2D()

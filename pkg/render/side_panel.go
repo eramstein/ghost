@@ -95,7 +95,7 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 
 	// Structure details
 	if hasStructure {
-		structure := simData.GetStructureByID(simData.UI.SelectedStructureIndex)
+		structure := simData.GetStructurePtrByID(simData.UI.SelectedStructureIndex)
 		if structure != nil {
 			drawSectionSeparator()
 			y = DrawStructureDetails(renderer, structure, x, y)

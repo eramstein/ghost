@@ -10,7 +10,7 @@ const (
 )
 
 func (sim *Sim) InitStructures() {
-	//sim.SpawnStructure(TilePosition{X: 21, Y: 15}, 0, Well)
+	sim.SpawnStructure(TilePosition{X: 21, Y: 15}, 0, Well)
 }
 
 func (sim *Sim) SpawnStructure(position TilePosition, variant int, structureType StructureType) {

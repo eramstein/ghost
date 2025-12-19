@@ -187,13 +187,7 @@ func (sim *Sim) AddStructure(structure Structure) int {
 
 	// Register on tile
 	tile := sim.GetTileAt(structure.Position)
-	// Avoid duplicates if caller re-adds
-	for _, existing := range tile.Structures {
-		if existing == id {
-			return id
-		}
-	}
-	tile.Structures = append(tile.Structures, id)
+	tile.Structure = id
 
 	return id
 }
@@ -208,14 +202,14 @@ func (sim *Sim) RemoveStructure(id int) {
 	s, ok := sim.StructureManager.GetStructure(id)
 	if ok {
 		tile := sim.GetTileAt(s.Position)
-		tile.Structures = removeInt(tile.Structures, id)
+		tile.Structure = -1
 	}
 
 	sim.StructureManager.RemoveStructure(id)
 }
 
 // GetStructureByID returns a structure pointer for a given ID, or nil if not found.
-func (sim *Sim) GetStructureByID(id int) *Structure {
+func (sim *Sim) GetStructurePtrByID(id int) *Structure {
 	if sim.StructureManager == nil {
 		return nil
 	}
@@ -226,12 +220,14 @@ func (sim *Sim) GetStructureByID(id int) *Structure {
 	return s
 }
 
-func removeInt(slice []int, value int) []int {
-	for i, v := range slice {
-		if v == value {
-			// preserve order
-			return append(slice[:i], slice[i+1:]...)
-		}
+// GetStructureByID returns a structure data for a given ID, or nil if not found.
+func (sim *Sim) GetStructureByID(id int) Structure {
+	if sim.StructureManager == nil {
+		return Structure{}
 	}
-	return slice
+	s, ok := sim.StructureManager.GetStructure(id)
+	if !ok {
+		return Structure{}
+	}
+	return s
 }

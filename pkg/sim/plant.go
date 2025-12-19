@@ -40,7 +40,7 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 			ProductionRate:  plant.Produces.ProductionRate,
 		},
 	}
-	sim.PlantManager.addPlant(newPlant)
+	sim.AddPlant(newPlant)
 }
 
 func (sim *Sim) Update(plant *Plant) {
@@ -64,5 +64,5 @@ func (sim *Sim) Update(plant *Plant) {
 }
 
 func (sim *Sim) RemovePlantById(id int) {
-	sim.PlantManager.removePlant(id)
+	sim.RemovePlant(id)
 }
