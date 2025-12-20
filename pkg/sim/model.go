@@ -6,10 +6,34 @@ type Sim struct {
 	UI               UIState
 	Player           Player
 	Tiles            []Tile
+	Fields           []Field
 	Characters       []Character
 	ItemManager      *ItemManager
 	PlantManager     *PlantManager
 	StructureManager *StructureManager
+}
+
+type Tile struct {
+	Type      TileType
+	Position  TilePosition
+	MoveCost  MoveCost
+	Items     []int
+	Structure int // structure id, -1 if no structure
+	Plant     int // plant id, -1 if no plant
+}
+
+type Field struct {
+	Centroid    TilePosition
+	SeedVariant int // a variant of ItemType Food
+	Tiles       []TilePosition
+	TileStatus  []FieldTileStatus
+}
+
+type FieldTileStatus struct {
+	Plowed      bool
+	Seeded      bool
+	Watered     bool
+	GrowthStage int // 0-100
 }
 
 type Calendar struct {
@@ -46,15 +70,6 @@ type Character struct {
 	Objectives    []Objective
 	Ambitions     []Ambition
 	Inventory     []int // Object IDs
-}
-
-type Tile struct {
-	Type      TileType
-	Position  TilePosition
-	MoveCost  MoveCost
-	Items     []int
-	Structure int // structure id, -1 if no structure
-	Plant     int // plant id, -1 if no plant
 }
 
 type WorldPosition struct {

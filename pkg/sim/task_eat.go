@@ -54,7 +54,8 @@ func (sim *Sim) GetNextEatingTask(character *Character, objective *Objective) (t
 				TargetTile: &closestItem.Location.TilePosition,
 			}
 		} else {
-			fmt.Printf("No food found for %v\n", character.Name)
+			ObjectiveFailed(character, objective)
+			return nil
 		}
 	}
 	return newTask

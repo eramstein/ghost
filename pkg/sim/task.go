@@ -79,6 +79,8 @@ func (sim *Sim) CreateNextTask(character *Character, objective *Objective) (task
 		task = sim.GetNextDrinkingTask(character, objective)
 	case SleepObjective:
 		task = sim.GetNextSleepingTask(character, objective)
+	case MakeFoodObjective:
+		task = sim.GetNextMakingFoodTask(character, objective)
 	}
 	return task
 }

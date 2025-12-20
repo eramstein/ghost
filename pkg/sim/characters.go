@@ -9,8 +9,8 @@ const CHARACTER_SPEED = 100
 
 func (sim *Sim) InitCharacters() {
 	sim.MakeCharacter("Henry", TilePosition{
-		X: 5,
-		Y: 5,
+		X: 25,
+		Y: 25,
 	})
 	// sim.MakeCharacter("Emma", TilePosition{
 	// 	X: 11,
@@ -52,9 +52,9 @@ func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 			Y: float32(pos.Y*config.TileSize + config.TileSize/2),
 		},
 		Needs: Needs{
-			Food:  0,
+			Food:  100,
 			Water: 0,
-			Sleep: 99,
+			Sleep: 0,
 		},
 	}
 	sim.Characters = append(sim.Characters, character)

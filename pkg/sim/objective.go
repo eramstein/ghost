@@ -13,6 +13,7 @@ const (
 	DrinkObjective
 	EatObjective
 	SleepObjective
+	MakeFoodObjective
 	BuildObjective
 )
 
@@ -26,6 +27,8 @@ func (ot ObjectiveType) String() string {
 		return "Eat"
 	case SleepObjective:
 		return "Sleep"
+	case MakeFoodObjective:
+		return "Make Food"
 	case BuildObjective:
 		return "Build"
 	}
@@ -35,8 +38,8 @@ func (ot ObjectiveType) String() string {
 func (sim *Sim) UpdateObjectives(character *Character) {
 	// periodically un-stuck all objectives to try again
 	if sim.Time%config.CharacterObjectiveResetInterval == 0 {
-		for _, objective := range character.Objectives {
-			objective.Stuck = false
+		for i := range character.Objectives {
+			character.Objectives[i].Stuck = false
 		}
 	}
 
@@ -103,11 +106,11 @@ func (sim *Sim) GetTopPriorityObjective(character *Character) *Objective {
 	if len(character.Objectives) == 0 {
 		return nil
 	}
-	lowestObjective := character.Objectives[0]
-	for _, objective := range character.Objectives {
-		if !objective.Stuck && objective.Type < lowestObjective.Type {
-			lowestObjective = objective
+	lowestIndex := -1
+	for i := range character.Objectives {
+		if !character.Objectives[i].Stuck && (lowestIndex == -1 || character.Objectives[i].Type < character.Objectives[lowestIndex].Type) {
+			lowestIndex = i
 		}
 	}
-	return &lowestObjective
+	return &character.Objectives[lowestIndex]
 }
