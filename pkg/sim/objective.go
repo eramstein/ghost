@@ -81,7 +81,8 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 
 func (character *Character) CompleteObjective(objective *Objective) {
 	fmt.Printf("Completing objective %v %v\n", character.Name, objective.Type)
-	for i, charObjective := range character.Objectives {
+	for i := len(character.Objectives) - 1; i >= 0; i-- {
+		charObjective := character.Objectives[i]
 		if charObjective.Type == objective.Type && charObjective.Variant == objective.Variant {
 			character.Objectives = append(character.Objectives[:i], character.Objectives[i+1:]...)
 		}
@@ -103,7 +104,7 @@ func (sim *Sim) CheckIfObjectiveIsAchieved(character *Character, objective *Obje
 			character.CompleteObjective(objective)
 		}
 	case MakeFoodObjective:
-		if sim.GetGrowingTilesCount() > 0 {
+		if sim.GetGrowingTilesCount() >= config.PlantSeedsAtLeast {
 			character.CompleteObjective(objective)
 		}
 	}

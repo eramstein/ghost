@@ -12,4 +12,7 @@ const (
 	NeedFoodMax  = 100
 	NeedWaterMax = 100
 	NeedSleepMax = 100
+
+	FieldGrowthRate   = 10
+	PlantSeedsAtLeast = 5
 )

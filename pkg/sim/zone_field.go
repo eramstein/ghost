@@ -1,6 +1,9 @@
 package sim
 
-import "math"
+import (
+	"gociv/pkg/config"
+	"math"
+)
 
 func (f Field) GetCentroid() TilePosition {
 	return f.Centroid
@@ -23,6 +26,28 @@ func (sim *Sim) CreateField(tiles []TilePosition, seedVariant int) *Field {
 		sim.Tiles[sim.GetTileIDFromPosition(tile)].ZoneIndex = int8(len(sim.Fields) - 1)
 	}
 	return &sim.Fields[len(sim.Fields)-1]
+}
+
+func (sim *Sim) UpdateFields() {
+	for i := range sim.Fields {
+		sim.UpdateField(&sim.Fields[i])
+	}
+}
+
+func (sim *Sim) UpdateField(field *Field) {
+	for i, tile := range field.TileStatus {
+		if tile.Seeded {
+			field.TileStatus[i].GrowthStage += config.FieldGrowthRate
+			if field.TileStatus[i].GrowthStage >= 100 {
+				field.TileStatus[i].Seeded = false
+				field.TileStatus[i].GrowthStage = 0
+				sim.AddItem(Item{
+					Type:    ItemTypeFood,
+					Variant: field.SeedVariant,
+				}, ItemLocation{LocationType: LocTile, TilePosition: field.Tiles[i]})
+			}
+		}
+	}
 }
 
 func (sim *Sim) GetClosestField(tilePosition TilePosition) *Field {
@@ -73,8 +98,8 @@ func (sim *Sim) GetSuitableFieldTiles(character *Character) []TilePosition {
 	if closestDirt != nil {
 		suitableTiles = append(suitableTiles, *closestDirt)
 		for _, dir := range EightDirections {
-			adjX := character.TilePosition.X + dir[0]
-			adjY := character.TilePosition.Y + dir[1]
+			adjX := closestDirt.X + dir[0]
+			adjY := closestDirt.Y + dir[1]
 			tile := sim.GetTileAt(TilePosition{X: adjX, Y: adjY})
 			if tile.Type == TileTypeDirt {
 				suitableTiles = append(suitableTiles, TilePosition{X: adjX, Y: adjY})

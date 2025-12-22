@@ -70,7 +70,7 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 	if hasTile {
 		tile := &simData.Tiles[simData.UI.SelectedTileIndex]
 		drawSectionSeparator()
-		y = DrawTileDetails(renderer, tile, x, y)
+		y = DrawTileDetails(renderer, simData, tile, x, y)
 
 		y += int(lineHeight) // Extra spacing after section
 	}
@@ -105,7 +105,7 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 
 // DrawTileDetails renders tile info starting at (x, y) and returns
 // the updated y position after drawing.
-func DrawTileDetails(renderer *Renderer, tile *sim.Tile, x, y int) int {
+func DrawTileDetails(renderer *Renderer, simData *sim.Sim, tile *sim.Tile, x, y int) int {
 	if tile == nil {
 		return y
 	}
@@ -136,6 +136,68 @@ func DrawTileDetails(renderer *Renderer, tile *sim.Tile, x, y int) int {
 			x, y, rl.NewColor(200, 200, 200, 255),
 		)
 		y += int(lineHeight)
+	}
+
+	// Zone information
+	zoneTypeStr := "None"
+	switch tile.ZoneType {
+	case sim.ZoneTypeField:
+		zoneTypeStr = "Field"
+	case sim.ZoneTypeRoom:
+		zoneTypeStr = "Room"
+	}
+	renderer.RenderTextWithColor(
+		fmt.Sprintf("Zone: %s", zoneTypeStr),
+		x, y, rl.NewColor(200, 200, 200, 255),
+	)
+	y += int(lineHeight)
+
+	if tile.ZoneType != sim.ZoneTypeNone && int(tile.ZoneIndex) >= 0 {
+		renderer.RenderTextWithColor(
+			fmt.Sprintf("Zone Index: %d", tile.ZoneIndex),
+			x, y, rl.NewColor(200, 200, 200, 255),
+		)
+		y += int(lineHeight)
+
+		// Field-specific details
+		if tile.ZoneType == sim.ZoneTypeField && int(tile.ZoneIndex) < len(simData.Fields) {
+			field := &simData.Fields[tile.ZoneIndex]
+			tileFieldIndex := sim.GetZoneTileIndex(field, tile.Position)
+			if tileFieldIndex >= 0 && tileFieldIndex < len(field.TileStatus) {
+				tileStatus := field.TileStatus[tileFieldIndex]
+				renderer.RenderTextWithColor(
+					fmt.Sprintf("Seed Variant: %d", field.SeedVariant),
+					x, y, rl.NewColor(200, 200, 200, 255),
+				)
+				y += int(lineHeight)
+
+				renderer.RenderTextWithColor(
+					fmt.Sprintf("Plowed: %v", tileStatus.Plowed),
+					x, y, rl.NewColor(200, 200, 200, 255),
+				)
+				y += int(lineHeight)
+
+				renderer.RenderTextWithColor(
+					fmt.Sprintf("Seeded: %v", tileStatus.Seeded),
+					x, y, rl.NewColor(200, 200, 200, 255),
+				)
+				y += int(lineHeight)
+
+				renderer.RenderTextWithColor(
+					fmt.Sprintf("Watered: %v", tileStatus.Watered),
+					x, y, rl.NewColor(200, 200, 200, 255),
+				)
+				y += int(lineHeight)
+
+				if tileStatus.Seeded {
+					renderer.RenderTextWithColor(
+						fmt.Sprintf("Growth Stage: %d%%", tileStatus.GrowthStage),
+						x, y, rl.NewColor(200, 200, 200, 255),
+					)
+					y += int(lineHeight)
+				}
+			}
+		}
 	}
 
 	return y

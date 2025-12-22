@@ -10,6 +10,7 @@ func (s *Sim) LogicUpdate() {
 	s.UpdateTime()
 	s.UpdateCharacters()
 	s.UpdatePlants()
+	s.UpdateFields()
 }
 
 // Things needed to be done every frame (movement...)

@@ -54,6 +54,9 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 		}
 	}
 
+	// Draw grid lines for visible tiles
+	//DrawGrid(leftBound, rightBound, topBound, bottomBound)
+
 	// Draw region border as a single rectangle outline
 	regionSize := float32(config.RegionSize * config.TileSize)
 	rl.DrawRectangleLinesEx(
@@ -61,6 +64,43 @@ func DrawMap(renderer *Renderer, simData *sim.Sim) {
 		2.0,
 		ColorBorder,
 	)
+}
+
+func DrawGrid(leftBound, rightBound, topBound, bottomBound float32) {
+	gridColor := rl.Color{R: 255, G: 255, B: 255, A: 40} // Semi-transparent white
+	tileSizeFloat := float32(config.TileSize)
+
+	// Calculate the range of tiles to draw grid for
+	startTileX := int(leftBound/tileSizeFloat) - 1
+	endTileX := int(rightBound/tileSizeFloat) + 1
+	startTileY := int(topBound/tileSizeFloat) - 1
+	endTileY := int(bottomBound/tileSizeFloat) + 1
+
+	// Draw vertical grid lines
+	for x := startTileX; x <= endTileX; x++ {
+		lineX := float32(x * config.TileSize)
+		if lineX >= leftBound && lineX <= rightBound {
+			rl.DrawLineEx(
+				rl.Vector2{X: lineX, Y: topBound},
+				rl.Vector2{X: lineX, Y: bottomBound},
+				1.0,
+				gridColor,
+			)
+		}
+	}
+
+	// Draw horizontal grid lines
+	for y := startTileY; y <= endTileY; y++ {
+		lineY := float32(y * config.TileSize)
+		if lineY >= topBound && lineY <= bottomBound {
+			rl.DrawLineEx(
+				rl.Vector2{X: leftBound, Y: lineY},
+				rl.Vector2{X: rightBound, Y: lineY},
+				1.0,
+				gridColor,
+			)
+		}
+	}
 }
 
 func DrawTile(renderer *Renderer, simData *sim.Sim, tile sim.Tile) {
