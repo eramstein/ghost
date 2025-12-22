@@ -34,4 +34,5 @@ var TileTypeColors = map[sim.TileType]rl.Color{
 
 var ItemTypeColors = map[sim.ItemType]rl.Color{
 	sim.ItemTypeFood: ColorLife,
+	sim.ItemTypeSeed: ColorStructure,
 }

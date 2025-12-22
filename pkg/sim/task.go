@@ -13,6 +13,7 @@ const (
 	Drink
 	Sleep
 	PickUp
+	PlantSeed
 )
 
 func (tt TaskType) String() string {
@@ -28,7 +29,9 @@ func (tt TaskType) String() string {
 	case Sleep:
 		return "Sleep"
 	case PickUp:
-		return "PickUp"
+		return "Pick up"
+	case PlantSeed:
+		return "Plant seed"
 	default:
 		return "Unknown"
 	}
@@ -63,6 +66,8 @@ func (sim *Sim) WorkOnCurrentTask(character *Character) {
 		sim.Sleep(character)
 	case PickUp:
 		sim.PickUp(character)
+	case PlantSeed:
+		sim.PlantSeed(character)
 	}
 	if task.Progress >= 100 {
 		sim.CompleteTask(character)

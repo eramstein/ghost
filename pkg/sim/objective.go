@@ -54,6 +54,10 @@ func (sim *Sim) UpdateObjectives(character *Character) {
 	if character.Needs.Sleep >= config.NeedSleepMax && !character.HasObjective(SleepObjective) {
 		sim.AddObjective(character, SleepObjective, 0)
 	}
+
+	if character.Needs.Food >= config.NeedFoodMax && sim.GetGrowingTilesCount() == 0 && !character.HasObjective(MakeFoodObjective) {
+		sim.AddObjective(character, MakeFoodObjective, 0)
+	}
 }
 
 func (sim *Sim) AddObjective(character *Character, objectiveType ObjectiveType, variant int) (createdObjective Objective) {
@@ -98,6 +102,10 @@ func (sim *Sim) CheckIfObjectiveIsAchieved(character *Character, objective *Obje
 		if character.Needs.Sleep < 10 {
 			character.CompleteObjective(objective)
 		}
+	case MakeFoodObjective:
+		if sim.GetGrowingTilesCount() > 0 {
+			character.CompleteObjective(objective)
+		}
 	}
 }
 
@@ -111,6 +119,9 @@ func (sim *Sim) GetTopPriorityObjective(character *Character) *Objective {
 		if !character.Objectives[i].Stuck && (lowestIndex == -1 || character.Objectives[i].Type < character.Objectives[lowestIndex].Type) {
 			lowestIndex = i
 		}
+	}
+	if lowestIndex == -1 {
+		return nil
 	}
 	return &character.Objectives[lowestIndex]
 }

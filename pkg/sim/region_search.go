@@ -23,7 +23,7 @@ func (sim *Sim) ScanForTile(position TilePosition, maxDistance int, terrain Tile
 	levelStart := 0
 	levelEnd := len(queue)
 
-	for levelStart < len(queue) && distance < maxDistance {
+	for levelStart < len(queue) && (distance < maxDistance || maxDistance == -1) {
 		// Process all tiles at current distance level
 		for i := levelStart; i < levelEnd; i++ {
 			current := queue[i]

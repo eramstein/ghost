@@ -2,7 +2,6 @@ package sim
 
 import (
 	"fmt"
-	"gociv/pkg/config"
 )
 
 func (sim *Sim) Drink(character *Character) {
@@ -24,11 +23,11 @@ func (sim *Sim) GetNextDrinkingTask(character *Character, objective *Objective) 
 	var newTask *Task
 	// Go to the closest water tile if needed, then drink
 	var closestWater *TilePosition
-	closestWell := sim.ScanForStructure(character.ID, character.TilePosition, config.RegionSize/2-1, Well, -1, true)
+	closestWell := sim.ScanForStructure(character.ID, character.TilePosition, -1, Well, -1, true)
 	if closestWell != nil {
 		closestWater = &closestWell.Position
 	} else {
-		closestWater = sim.ScanForTile(character.TilePosition, config.RegionSize/2-1, TileTypeWater)
+		closestWater = sim.ScanForTile(character.TilePosition, -1, TileTypeWater)
 	}
 	fmt.Printf("closestWater: %v\n", closestWater)
 	if closestWater == nil {

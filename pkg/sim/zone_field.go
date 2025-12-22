@@ -2,11 +2,11 @@ package sim
 
 import "math"
 
-func (f *Field) GetCentroid() TilePosition {
+func (f Field) GetCentroid() TilePosition {
 	return f.Centroid
 }
 
-func (f *Field) GetTiles() []TilePosition {
+func (f Field) GetTiles() []TilePosition {
 	return f.Tiles
 }
 
@@ -18,6 +18,10 @@ func (sim *Sim) CreateField(tiles []TilePosition, seedVariant int) *Field {
 		TileStatus:  make([]FieldTileStatus, len(tiles)),
 	}
 	sim.Fields = append(sim.Fields, newField)
+	for _, tile := range tiles {
+		sim.Tiles[sim.GetTileIDFromPosition(tile)].ZoneType = ZoneTypeField
+		sim.Tiles[sim.GetTileIDFromPosition(tile)].ZoneIndex = int8(len(sim.Fields) - 1)
+	}
 	return &sim.Fields[len(sim.Fields)-1]
 }
 
@@ -43,4 +47,39 @@ func (field *Field) GetFreeTiles() []TilePosition {
 		}
 	}
 	return freeTiles
+}
+
+func (field *Field) GetGrowingTiles() []TilePosition {
+	var growingTiles []TilePosition
+	for i, tile := range field.Tiles {
+		if field.TileStatus[i].Seeded && field.TileStatus[i].GrowthStage < 100 {
+			growingTiles = append(growingTiles, tile)
+		}
+	}
+	return growingTiles
+}
+
+func (sim *Sim) GetGrowingTilesCount() int {
+	count := 0
+	for _, field := range sim.Fields {
+		count += len(field.GetGrowingTiles())
+	}
+	return count
+}
+
+func (sim *Sim) GetSuitableFieldTiles(character *Character) []TilePosition {
+	var suitableTiles []TilePosition
+	closestDirt := sim.ScanForTile(character.TilePosition, -1, TileTypeDirt)
+	if closestDirt != nil {
+		suitableTiles = append(suitableTiles, *closestDirt)
+		for _, dir := range EightDirections {
+			adjX := character.TilePosition.X + dir[0]
+			adjY := character.TilePosition.Y + dir[1]
+			tile := sim.GetTileAt(TilePosition{X: adjX, Y: adjY})
+			if tile.Type == TileTypeDirt {
+				suitableTiles = append(suitableTiles, TilePosition{X: adjX, Y: adjY})
+			}
+		}
+	}
+	return suitableTiles
 }

@@ -2,7 +2,6 @@ package sim
 
 import (
 	"fmt"
-	"gociv/pkg/config"
 )
 
 func (sim *Sim) Eat(character *Character) {
@@ -43,7 +42,7 @@ func (sim *Sim) GetNextEatingTask(character *Character, objective *Objective) (t
 		}
 	} else {
 		// If no food on tile, find the closest food item and add a task to go to it
-		closestItem := sim.ScanForItem(character.ID, character.TilePosition, config.RegionSize/2-1, ItemTypeFood, -1, true)
+		closestItem := sim.ScanForItem(character.ID, character.TilePosition, -1, ItemTypeFood, -1, true)
 		if closestItem != nil {
 			// claim item
 			closestItem.OwnedBy = character.ID

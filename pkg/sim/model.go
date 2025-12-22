@@ -20,6 +20,8 @@ type Tile struct {
 	Items     []int
 	Structure int // structure id, -1 if no structure
 	Plant     int // plant id, -1 if no plant
+	ZoneType  ZoneType
+	ZoneIndex int8
 }
 
 type Field struct {
@@ -34,6 +36,7 @@ type FieldTileStatus struct {
 	Seeded      bool
 	Watered     bool
 	GrowthStage int // 0-100
+	SeedVariant int
 }
 
 type Calendar struct {
