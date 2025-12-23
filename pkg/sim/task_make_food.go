@@ -108,7 +108,7 @@ func (sim *Sim) PlantSeed(character *Character) {
 		field.TileStatus[tileFieldIndex].Seeded = true
 		field.TileStatus[tileFieldIndex].GrowthStage = 0
 		field.TileStatus[tileFieldIndex].SeedVariant = materialSource.Variant
-		sim.RemoveItem(materialSource.ID)
+		sim.DecreaseItemStackCount(materialSource.ID)
 		fmt.Printf("Planted seed on %v with variant %v\n", tile.Position, materialSource.Variant)
 	}
 }

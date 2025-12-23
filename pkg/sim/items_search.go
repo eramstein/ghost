@@ -80,11 +80,6 @@ func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance 
 	return nil
 }
 
-// getPositionKey returns a unique key for a position (helper function)
-func getPositionKey(pos TilePosition) string {
-	return fmt.Sprintf("%d,%d", pos.X, pos.Y)
-}
-
 func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType ItemType, variant int, unclaimedOnly bool) *Item {
 	if position.X == 1 && position.Y == 1 {
 		fmt.Printf("Finding item in tile %d, %d\n", position.X, position.Y)

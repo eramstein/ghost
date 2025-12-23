@@ -14,5 +14,6 @@ const (
 	NeedSleepMax = 100
 
 	FieldGrowthRate   = 10
+	FieldDefaultSize  = 10
 	PlantSeedsAtLeast = 5
 )

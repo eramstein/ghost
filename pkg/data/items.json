@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "itemType": 1,
+      "variant": 0,
+      "name": "Apple",
+      "efficiency": 20
+    },
+    {
+      "itemType": 1,
+      "variant": 1,
+      "name": "Bread",
+      "efficiency": 30
+    },{
+      "itemType": 1,
+      "variant": 2,
+      "name": "Potato",
+      "efficiency": 80
+    }
+  ]
+}
+
+

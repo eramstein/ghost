@@ -72,3 +72,8 @@ func IsAdjacent(x1, y1, x2, y2 int) bool {
 func (t *TilePosition) IsSameAs(otherTile TilePosition) bool {
 	return t.X == otherTile.X && t.Y == otherTile.Y
 }
+
+// getPositionKey returns a unique key for a position (helper function)
+func getPositionKey(pos TilePosition) string {
+	return fmt.Sprintf("%d,%d", pos.X, pos.Y)
+}

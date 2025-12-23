@@ -1,7 +1,9 @@
 package sim
 
 import (
+	"fmt"
 	"gociv/pkg/config"
+	"gociv/pkg/data"
 	"math"
 )
 
@@ -41,9 +43,15 @@ func (sim *Sim) UpdateField(field *Field) {
 			if field.TileStatus[i].GrowthStage >= 100 {
 				field.TileStatus[i].Seeded = false
 				field.TileStatus[i].GrowthStage = 0
+				foodItem, _ := data.GetItemDefinition(int(ItemTypeFood), field.SeedVariant)
+				if foodItem.ItemType != int(ItemTypeFood) {
+					fmt.Printf("Food item type is not Food: %v\n", foodItem.ItemType)
+					continue
+				}
 				sim.AddItem(Item{
-					Type:    ItemTypeFood,
-					Variant: field.SeedVariant,
+					Type:       ItemTypeFood,
+					Variant:    foodItem.Variant,
+					Efficiency: foodItem.Efficiency,
 				}, ItemLocation{LocationType: LocTile, TilePosition: field.Tiles[i]})
 			}
 		}
@@ -97,13 +105,52 @@ func (sim *Sim) GetSuitableFieldTiles(character *Character) []TilePosition {
 	closestDirt := sim.ScanForTile(character.TilePosition, -1, TileTypeDirt)
 	if closestDirt != nil {
 		suitableTiles = append(suitableTiles, *closestDirt)
-		for _, dir := range EightDirections {
-			adjX := closestDirt.X + dir[0]
-			adjY := closestDirt.Y + dir[1]
-			tile := sim.GetTileAt(TilePosition{X: adjX, Y: adjY})
-			if tile.Type == TileTypeDirt {
-				suitableTiles = append(suitableTiles, TilePosition{X: adjX, Y: adjY})
+		// BFS: visit all dirt tiles by order of distance
+		visited := make(map[string]bool)
+		visited[getPositionKey(*closestDirt)] = true
+		distance := 0
+		levelStart := 0
+		levelEnd := len(suitableTiles)
+
+		for levelStart < len(suitableTiles) && len(suitableTiles) <= config.FieldDefaultSize {
+			// Process all tiles at current distance level
+			for i := levelStart; i < levelEnd; i++ {
+				current := suitableTiles[i]
+
+				// Check all neighbors
+				for _, dir := range EightDirections {
+					newX, newY := current.X+dir[0], current.Y+dir[1]
+
+					// Check bounds
+					if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
+						continue
+					}
+
+					// Check if already visited
+					key := getPositionKey(TilePosition{X: newX, Y: newY})
+					if visited[key] {
+						continue
+					}
+
+					// Check if tile is dirt
+					tileIndex := newY*config.RegionSize + newX
+					if sim.Tiles[tileIndex].Type != TileTypeDirt {
+						// Mark as visited but don't explore further
+						visited[key] = true
+						continue
+					}
+
+					// Mark as visited and add to suitableTiles
+					visited[key] = true
+					neighborPos := TilePosition{X: newX, Y: newY}
+					suitableTiles = append(suitableTiles, neighborPos)
+				}
 			}
+
+			// Move to next distance level
+			distance++
+			levelStart = levelEnd
+			levelEnd = len(suitableTiles)
 		}
 	}
 	return suitableTiles

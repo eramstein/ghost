@@ -50,10 +50,10 @@ type Item struct {
 	Type       ItemType
 	Variant    int
 	Location   ItemLocation
-	OwnedBy    int   // character id, -1 if not owned
-	Efficiency int   // for food it's nutrition value
-	Durability int   // for materials it's how many builds they can support
-	Items      []int // Item IDs
+	OwnedBy    int // character id, -1 if not owned
+	Efficiency int // for food it's nutrition value
+	Durability int
+	StackCount int // some items can be stacked, e.g. seeds or materials
 }
 
 type ItemLocation struct {
@@ -104,7 +104,8 @@ type Task struct {
 	ProductVariant int           // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
 	TargetItem     *Item         // optional, e.g. for eating tasks it's the food item to eat
 	TargetTile     *TilePosition // optional, e.g. for building it's the tile ot build on
-	MaterialSource *Item         // optional, for bulding tasks it's the material item to use
+	MaterialSource *Item         // optional, e.g. for building tasks it's the material item to use, for planting it's the seed...
+	Count          int           // optional, general field, e.g. for a pick up task how many items to get
 }
 
 type Objective struct {

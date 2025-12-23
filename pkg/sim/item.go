@@ -23,7 +23,5 @@ const (
 func (sim *Sim) InitItems() {
 	fmt.Printf("Initializing items\n")
 	location := ItemLocation{LocationType: LocTile, TilePosition: TilePosition{X: 16, Y: 16}}
-	for i := 0; i < 8; i++ {
-		sim.AddItem(Item{Type: ItemTypeSeed, Variant: 0}, location)
-	}
+	sim.AddItem(Item{Type: ItemTypeSeed, Variant: 2, StackCount: 8}, location)
 }

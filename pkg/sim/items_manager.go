@@ -218,6 +218,14 @@ func (s *Sim) RemoveItem(id int) error {
 	}
 	return s.ItemManager.removeItem(id)
 }
+func (s *Sim) DecreaseItemStackCount(id int) error {
+	item := s.ItemManager.getItem(id)
+	item.StackCount--
+	if item.StackCount <= 0 {
+		return s.RemoveItem(id)
+	}
+	return nil
+}
 func (s *Sim) GetItem(id int) Item {
 	return s.ItemManager.getItem(id)
 }
