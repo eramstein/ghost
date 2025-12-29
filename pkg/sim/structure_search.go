@@ -34,7 +34,7 @@ func (sim *Sim) ScanForStructure(characterID int, position TilePosition, maxDist
 
 			// Check all neighbors
 			for _, dir := range EightDirections {
-				newX, newY := current.X+dir[0], current.Y+dir[1]
+				newX, newY := current.X+int16(dir[0]), current.Y+int16(dir[1])
 
 				// Check bounds
 				if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {

@@ -10,7 +10,7 @@ func (sim *Sim) Eat(character *Character) {
 	task.Progress += 10
 	fmt.Println("Eating", character.Name, item.Type, item.Efficiency)
 	if task.Progress >= 100 {
-		character.Needs.Food -= item.Efficiency
+		character.Needs.Food -= int(item.Efficiency)
 		if character.Needs.Food < 0 {
 			character.Needs.Food = 0
 		}

@@ -8,7 +8,7 @@ import (
 // ScanForItem searches the closest reachable item of a given type using BFS
 // Only explores passable tiles, so it respects walls and obstacles
 // if variant is irrelevant pass -1
-func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance int, itemType ItemType, variant int, unclaimedOnly bool) *Item {
+func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance int, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
 	// Check current tile first
 	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
 		tile := sim.GetTileAt(position)
@@ -37,7 +37,7 @@ func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance 
 
 			// Check all neighbors
 			for _, dir := range EightDirections {
-				newX, newY := current.X+dir[0], current.Y+dir[1]
+				newX, newY := current.X+int16(dir[0]), current.Y+int16(dir[1])
 
 				// Check bounds
 				if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
@@ -80,7 +80,7 @@ func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance 
 	return nil
 }
 
-func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType ItemType, variant int, unclaimedOnly bool) *Item {
+func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
 	if position.X == 1 && position.Y == 1 {
 		fmt.Printf("Finding item in tile %d, %d\n", position.X, position.Y)
 	}
@@ -95,7 +95,7 @@ func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType 
 	return nil
 }
 
-func (sim *Sim) FindInInventory(character *Character, itemType ItemType, variant int) *Item {
+func (sim *Sim) FindInInventory(character *Character, itemType ItemType, variant int16) *Item {
 	for _, itemID := range character.Inventory {
 		item := sim.GetItemPtr(itemID)
 		if item != nil && item.Type == itemType && (item.Variant == variant || variant == -1) {

@@ -9,7 +9,7 @@ import (
 
 // Node represents a tile in the pathfinding graph
 type Node struct {
-	X, Y     int
+	X, Y     int16
 	F, G, H  float64 // costs for A* algorithm
 	Parent   *Node
 	MoveCost MoveCost
@@ -76,8 +76,8 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 
 		// Check if we reached the goal
 		if vicinity > 0 {
-			if current.X <= end.X+vicinity && current.X >= end.X-vicinity &&
-				current.Y <= end.Y+vicinity && current.Y >= end.Y-vicinity {
+			if current.X <= end.X+int16(vicinity) && current.X >= end.X-int16(vicinity) &&
+				current.Y <= end.Y+int16(vicinity) && current.Y >= end.Y-int16(vicinity) {
 				return reconstructPath(current)
 			}
 		} else {
@@ -91,7 +91,7 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 
 		// Check all 8 neighbors
 		for _, dir := range EightDirections {
-			newX, newY := current.X+dir[0], current.Y+dir[1]
+			newX, newY := current.X+int16(dir[0]), current.Y+int16(dir[1])
 
 			// Check bounds
 			if newX < 0 || newX >= config.RegionSize || newY < 0 || newY >= config.RegionSize {
@@ -187,7 +187,7 @@ func (s *Sim) FindPath(start TilePosition, end TilePosition, vicinity int) []Til
 }
 
 // heuristic calculates the diagonal distance between two positions
-func heuristic(x1, y1, x2, y2 int) float64 {
+func heuristic(x1, y1, x2, y2 int16) float64 {
 	dx := math.Abs(float64(x1 - x2))
 	dy := math.Abs(float64(y1 - y2))
 	// Using diagonal distance formula: max(dx, dy) + (sqrt2 - 1) * min(dx, dy)
@@ -195,7 +195,7 @@ func heuristic(x1, y1, x2, y2 int) float64 {
 }
 
 // getNodeKey returns a unique key for a position
-func getNodeKey(x, y int) string {
+func getNodeKey(x, y int16) string {
 	return fmt.Sprintf("%d,%d", x, y)
 }
 

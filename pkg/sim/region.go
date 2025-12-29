@@ -54,8 +54,8 @@ func InitRegion() RegionInitResult {
 	if err != nil {
 		for i := range result.Tiles {
 			result.Tiles[i].Position = TilePosition{
-				X: i % config.RegionSize,
-				Y: i / config.RegionSize,
+				X: int16(i % config.RegionSize),
+				Y: int16(i / config.RegionSize),
 			}
 			result.Tiles[i].Structure = -1
 			result.Tiles[i].Plant = -1
@@ -81,7 +81,7 @@ func (s *Sim) GetTileAt(position TilePosition) *Tile {
 }
 
 func (s *Sim) GetTileIDFromPosition(position TilePosition) int {
-	return position.Y*config.RegionSize + position.X
+	return int(position.Y*config.RegionSize + position.X)
 }
 
 func (s *Sim) GetRandomEmptyTile() *Tile {

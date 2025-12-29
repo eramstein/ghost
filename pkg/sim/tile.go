@@ -65,7 +65,7 @@ func (t *Tile) RemoveItem(itemID int) {
 	}
 }
 
-func IsAdjacent(x1, y1, x2, y2 int) bool {
+func IsAdjacent(x1, y1, x2, y2 int16) bool {
 	return math.Abs(float64(x1-x2)) <= 1 && math.Abs(float64(y1-y2)) <= 1
 }
 

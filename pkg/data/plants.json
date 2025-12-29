@@ -6,7 +6,7 @@
       "name": "Apple Tree",
       "growthRate": 1,      
       "produces": {
-        "type": 0,
+        "type": 1,
         "variant": 0,
         "productionRate": 2
       }
@@ -15,12 +15,7 @@
       "plantType": 0,
       "variant": 1,
       "name": "Oak Tree",
-      "growthRate": 1,
-      "produces": {
-        "type": 0,
-        "variant": 1,
-        "productionRate": 2
-      }
+      "growthRate": 1
     }
   ]
 }

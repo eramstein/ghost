@@ -9,17 +9,17 @@ import (
 // PlantDefinition represents a plant configuration loaded from JSON
 type PlantDefinition struct {
 	PlantType  int           `json:"plantType"`
-	Variant    int           `json:"variant"`
+	Variant    int16         `json:"variant"`
 	Name       string        `json:"name"`
-	GrowthRate int           `json:"growthRate"`
+	GrowthRate uint8         `json:"growthRate"`
 	Produces   ProductionDef `json:"produces"`
 }
 
 // ProductionDef represents what a plant produces
 type ProductionDef struct {
-	Type           int `json:"type"`
-	Variant        int `json:"variant"`
-	ProductionRate int `json:"productionRate"`
+	Type           int   `json:"type"`
+	Variant        int16 `json:"variant"`
+	ProductionRate uint8 `json:"productionRate"`
 }
 
 // PlantDataFile represents the structure of the JSON file
@@ -28,7 +28,7 @@ type PlantDataFile struct {
 }
 
 // PlantDefinitionsMap maps (PlantType, Variant) -> PlantDefinition
-var PlantDefinitionsMap map[int]map[int]PlantDefinition
+var PlantDefinitionsMap map[int]map[int16]PlantDefinition
 
 // LoadPlantDefinitions loads plant definitions from the JSON file
 func LoadPlantDefinitions() error {
@@ -45,12 +45,12 @@ func LoadPlantDefinitions() error {
 	}
 
 	// Initialize the map
-	PlantDefinitionsMap = make(map[int]map[int]PlantDefinition)
+	PlantDefinitionsMap = make(map[int]map[int16]PlantDefinition)
 
 	// Populate the map
 	for _, plant := range data.Plants {
 		if PlantDefinitionsMap[plant.PlantType] == nil {
-			PlantDefinitionsMap[plant.PlantType] = make(map[int]PlantDefinition)
+			PlantDefinitionsMap[plant.PlantType] = make(map[int16]PlantDefinition)
 		}
 		PlantDefinitionsMap[plant.PlantType][plant.Variant] = plant
 	}
@@ -60,7 +60,7 @@ func LoadPlantDefinitions() error {
 }
 
 // GetPlantDefinition retrieves a plant definition by type and variant
-func GetPlantDefinition(plantType int, variant int) (*PlantDefinition, bool) {
+func GetPlantDefinition(plantType int, variant int16) (*PlantDefinition, bool) {
 	if PlantDefinitionsMap == nil {
 		return nil, false
 	}

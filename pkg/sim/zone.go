@@ -19,8 +19,8 @@ func GetZoneCentroid(tiles []TilePosition) TilePosition {
 		centroid.X += tile.X
 		centroid.Y += tile.Y
 	}
-	centroid.X /= len(tiles)
-	centroid.Y /= len(tiles)
+	centroid.X /= int16(len(tiles))
+	centroid.Y /= int16(len(tiles))
 	return centroid
 }
 

@@ -27,7 +27,7 @@ type UIState struct {
 	EditorMode             EditorMode
 	EditorTileType         TileType
 	EditorPlantType        PlantType
-	EditorPlantVariant     int
+	EditorPlantVariant     int16
 	EditorStructureType    StructureType
 	SelectedTileIndex      int
 	SelectedCharacterIndex int

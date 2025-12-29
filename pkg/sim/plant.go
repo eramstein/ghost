@@ -20,7 +20,7 @@ func (sim *Sim) UpdatePlants() {
 	})
 }
 
-func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantType) int {
+func (sim *Sim) SpawnPlant(position TilePosition, variant int16, plantType PlantType) int {
 	plant, _ := data.GetPlantDefinition(int(plantType), variant)
 	newPlant := Plant{
 		Variant:    variant,
@@ -30,7 +30,7 @@ func (sim *Sim) SpawnPlant(position TilePosition, variant int, plantType PlantTy
 		Produces: Production{
 			Type:            ItemType(plant.Produces.Type),
 			Variant:         plant.Produces.Variant,
-			ProductionStage: 99,
+			ProductionStage: 0,
 			ProductionRate:  plant.Produces.ProductionRate,
 		},
 	}
@@ -41,7 +41,7 @@ func (sim *Sim) Update(plant *Plant) {
 	if plant.GrowthStage < 100 {
 		plant.GrowthStage += plant.GrowthRate
 	}
-	if plant.GrowthStage >= 100 && plant.Produces.ProductionStage <= 100 {
+	if plant.GrowthStage >= 100 && plant.Produces.ProductionStage <= 100 && plant.Produces.Type != ItemTypeNone {
 		plant.Produces.ProductionStage += plant.Produces.ProductionRate
 	}
 	if plant.Produces.ProductionStage >= 100 {

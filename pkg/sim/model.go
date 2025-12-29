@@ -26,7 +26,7 @@ type Tile struct {
 
 type Field struct {
 	Centroid    TilePosition
-	SeedVariant int // a variant of ItemType Food
+	SeedVariant int16
 	Tiles       []TilePosition
 	TileStatus  []FieldTileStatus
 }
@@ -35,25 +35,25 @@ type FieldTileStatus struct {
 	Plowed      bool
 	Seeded      bool
 	Watered     bool
-	GrowthStage int // 0-100
-	SeedVariant int
+	GrowthStage uint8 // 0-100
+	SeedVariant int16
 }
 
 type Calendar struct {
-	Minute int
-	Hour   int
-	Day    int
+	Minute int8
+	Hour   int8
+	Day    int8
 }
 
 type Item struct {
 	ID         int
 	Type       ItemType
-	Variant    int
+	Variant    int16
 	Location   ItemLocation
-	OwnedBy    int // character id, -1 if not owned
-	Efficiency int // for food it's nutrition value
-	Durability int
-	StackCount int // some items can be stacked, e.g. seeds or materials
+	OwnedBy    int   // character id, -1 if not owned
+	Efficiency uint8 // for food it's nutrition value
+	Durability uint8
+	StackCount uint8 // some items can be stacked, e.g. seeds or materials
 }
 
 type ItemLocation struct {
@@ -81,8 +81,8 @@ type WorldPosition struct {
 }
 
 type TilePosition struct {
-	X int
-	Y int
+	X int16
+	Y int16
 }
 
 type Player struct {
@@ -101,16 +101,16 @@ type Task struct {
 	Objective      *Objective
 	Progress       float32       // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
 	ProductType    int           // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
-	ProductVariant int           // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
+	ProductVariant int16         // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
 	TargetItem     *Item         // optional, e.g. for eating tasks it's the food item to eat
 	TargetTile     *TilePosition // optional, e.g. for building it's the tile ot build on
 	MaterialSource *Item         // optional, e.g. for building tasks it's the material item to use, for planting it's the seed...
-	Count          int           // optional, general field, e.g. for a pick up task how many items to get
+	Count          uint8         // optional, general field, e.g. for a pick up task how many items to get
 }
 
 type Objective struct {
 	Type    ObjectiveType
-	Variant int // optional, further precises the objective by providing a variant (e.g. "build a house")
+	Variant int16 // optional, further precises the objective by providing a variant (e.g. "build a house")
 	Stuck   bool
 	Plan    []Task // optional, sometimes we pre-plan list of tasks as the objective is defined
 }
@@ -124,24 +124,24 @@ type Plant struct {
 	ID          int
 	Position    TilePosition
 	PlantType   PlantType
-	Variant     int
-	GrowthStage int // 0-100
-	GrowthRate  int // How many growth stages per update
+	Variant     int16
+	GrowthStage uint8 // 0-100
+	GrowthRate  uint8 // How many growth stages per update
 	Produces    Production
 }
 
 type Production struct {
 	Type            ItemType
-	Variant         int
-	ProductionStage int // 0-100
-	ProductionRate  int // How many production stages per update
+	Variant         int16
+	ProductionStage uint8 // 0-100
+	ProductionRate  uint8 // How many production stages per update
 }
 
 type Structure struct {
 	ID            int
 	Position      TilePosition
 	StructureType StructureType
-	Condition     int // 0-100
-	Owner         int // character id, -1 if not owned
-	BuildProgress int // 0-100
+	Condition     uint8 // 0-100
+	Owner         int   // character id, -1 if not owned
+	BuildProgress uint8 // 0-100
 }

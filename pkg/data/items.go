@@ -9,10 +9,10 @@ import (
 // ItemDefinition represents an item configuration loaded from JSON
 type ItemDefinition struct {
 	ItemType   int    `json:"itemType"`
-	Variant    int    `json:"variant"`
+	Variant    int16  `json:"variant"`
 	Name       string `json:"name"`
-	Efficiency int    `json:"efficiency"` // e.g. nutrition value for food
-	StackSize  int    `json:"stackSize"`
+	Efficiency uint8  `json:"efficiency"` // e.g. nutrition value for food
+	StackSize  uint8  `json:"stackSize"`
 }
 
 // ItemDataFile represents the structure of the JSON file
@@ -21,7 +21,7 @@ type ItemDataFile struct {
 }
 
 // ItemDefinitionsMap maps (ItemType, Variant) -> ItemDefinition
-var ItemDefinitionsMap map[int]map[int]ItemDefinition
+var ItemDefinitionsMap map[int]map[int16]ItemDefinition
 
 // LoadItemDefinitions loads item definitions from the JSON file
 func LoadItemDefinitions() error {
@@ -38,12 +38,12 @@ func LoadItemDefinitions() error {
 	}
 
 	// Initialize the map
-	ItemDefinitionsMap = make(map[int]map[int]ItemDefinition)
+	ItemDefinitionsMap = make(map[int]map[int16]ItemDefinition)
 
 	// Populate the map
 	for _, item := range data.Items {
 		if ItemDefinitionsMap[item.ItemType] == nil {
-			ItemDefinitionsMap[item.ItemType] = make(map[int]ItemDefinition)
+			ItemDefinitionsMap[item.ItemType] = make(map[int16]ItemDefinition)
 		}
 		ItemDefinitionsMap[item.ItemType][item.Variant] = item
 	}
@@ -53,7 +53,7 @@ func LoadItemDefinitions() error {
 }
 
 // GetItemDefinition retrieves an item definition by type and variant
-func GetItemDefinition(itemType int, variant int) (*ItemDefinition, bool) {
+func GetItemDefinition(itemType int, variant int16) (*ItemDefinition, bool) {
 	if ItemDefinitionsMap == nil {
 		return nil, false
 	}
@@ -64,5 +64,3 @@ func GetItemDefinition(itemType int, variant int) (*ItemDefinition, bool) {
 	}
 	return nil, false
 }
-
-

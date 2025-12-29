@@ -67,11 +67,11 @@ func (m *Manager) HandleKeyboardEditor(deltaTime float32) {
 					// Variant exists, but we're at 0, so wrap to max
 					maxVariant := 0
 					for i := 0; i < 10; i++ {
-						if def, ok := data.GetPlantDefinition(int(m.sim.UI.EditorPlantType), i); ok && def != nil {
+						if def, ok := data.GetPlantDefinition(int(m.sim.UI.EditorPlantType), int16(i)); ok && def != nil {
 							maxVariant = i
 						}
 					}
-					m.sim.UI.EditorPlantVariant = maxVariant
+					m.sim.UI.EditorPlantVariant = int16(maxVariant)
 				}
 			}
 			if def, ok := data.GetPlantDefinition(int(m.sim.UI.EditorPlantType), m.sim.UI.EditorPlantVariant); ok && def != nil {

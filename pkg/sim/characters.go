@@ -89,7 +89,7 @@ func (character *Character) UpdateNeeds() {
 
 // GetInventoryItems returns all items of a specific type and variant in the character's inventory
 // if variant is -1, all variants are returned
-func (sim *Sim) GetInventoryItems(character *Character, itemType ItemType, variant int) []*Item {
+func (sim *Sim) GetInventoryItems(character *Character, itemType ItemType, variant int16) []*Item {
 	var items []*Item
 	for _, itemID := range character.Inventory {
 		item := sim.GetItemPtr(itemID)

@@ -63,15 +63,17 @@ func DrawPlantDetails(renderer *Renderer, plant *sim.Plant, x, y int) int {
 	y += int(lineHeight)
 
 	// Production
-	renderer.RenderTextWithColor("Production:", x, y, rl.NewColor(255, 255, 255, 255))
-	y += int(lineHeight)
-	renderer.RenderTextWithColor(fmt.Sprintf("  Item Type: %d", plant.Produces.Type), x, y, rl.NewColor(200, 200, 200, 255))
-	y += int(lineHeight)
-	renderer.RenderTextWithColor(fmt.Sprintf("  Variant: %d", plant.Produces.Variant), x, y, rl.NewColor(200, 200, 200, 255))
-	y += int(lineHeight)
-	renderer.RenderTextWithColor(fmt.Sprintf("  Stage: %d%%", plant.Produces.ProductionStage), x, y, rl.NewColor(200, 200, 200, 255))
-	y += int(lineHeight)
-	renderer.RenderTextWithColor(fmt.Sprintf("  Rate: %d / update", plant.Produces.ProductionRate), x, y, rl.NewColor(200, 200, 200, 255))
+	if plant.Produces.ProductionRate > 0 {
+		renderer.RenderTextWithColor("Production:", x, y, rl.NewColor(255, 255, 255, 255))
+		y += int(lineHeight)
+		renderer.RenderTextWithColor(fmt.Sprintf("  Item Type: %d", plant.Produces.Type), x, y, rl.NewColor(200, 200, 200, 255))
+		y += int(lineHeight)
+		renderer.RenderTextWithColor(fmt.Sprintf("  Variant: %d", plant.Produces.Variant), x, y, rl.NewColor(200, 200, 200, 255))
+		y += int(lineHeight)
+		renderer.RenderTextWithColor(fmt.Sprintf("  Stage: %d%%", plant.Produces.ProductionStage), x, y, rl.NewColor(200, 200, 200, 255))
+		y += int(lineHeight)
+		renderer.RenderTextWithColor(fmt.Sprintf("  Rate: %d / update", plant.Produces.ProductionRate), x, y, rl.NewColor(200, 200, 200, 255))
+	}
 
 	return y
 }

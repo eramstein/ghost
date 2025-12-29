@@ -60,7 +60,7 @@ func (sim *Sim) UpdateObjectives(character *Character) {
 	}
 }
 
-func (sim *Sim) AddObjective(character *Character, objectiveType ObjectiveType, variant int) (createdObjective Objective) {
+func (sim *Sim) AddObjective(character *Character, objectiveType ObjectiveType, variant int16) (createdObjective Objective) {
 	objective := Objective{
 		Type:    objectiveType,
 		Variant: variant,

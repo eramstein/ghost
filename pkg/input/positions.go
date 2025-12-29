@@ -15,7 +15,7 @@ func (m *Manager) ScreenToTileCoordinates(screenPos rl.Vector2) sim.TilePosition
 	worldPos := rl.GetScreenToWorld2D(screenPos, *m.camera)
 	tileX := int(worldPos.X) / config.TileSize
 	tileY := int(worldPos.Y) / config.TileSize
-	return sim.TilePosition{X: tileX, Y: tileY}
+	return sim.TilePosition{X: int16(tileX), Y: int16(tileY)}
 }
 
 // screenToWorld converts screen coordinates to world coordinates using camera
@@ -33,7 +33,7 @@ func (m *Manager) WorldToTile(worldX, worldY float32) sim.TilePosition {
 	tileY := int(worldY / float32(config.TileSize))
 
 	return sim.TilePosition{
-		X: tileX,
-		Y: tileY,
+		X: int16(tileX),
+		Y: int16(tileY),
 	}
 }
