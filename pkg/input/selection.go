@@ -1,6 +1,6 @@
 package input
 
-func (m *Manager) SelectCharacter(characterID int) {
+func (m *Manager) SelectCharacter(characterID int8) {
 	m.sim.UI.SelectedCharacterIndex = characterID
 }
 
@@ -9,12 +9,12 @@ func (m *Manager) SelectTile(tileID int) {
 }
 
 // SelectPlant now takes a plant ID (managed by PlantManager) rather than a slice index.
-func (m *Manager) SelectPlant(plantID int) {
+func (m *Manager) SelectPlant(plantID int16) {
 	m.sim.UI.SelectedPlantIndex = plantID
 }
 
 // SelectStructure takes a structure ID (managed by StructureManager) rather than a slice index.
-func (m *Manager) SelectStructure(structureID int) {
+func (m *Manager) SelectStructure(structureID int16) {
 	m.sim.UI.SelectedStructureIndex = structureID
 }
 

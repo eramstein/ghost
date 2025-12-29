@@ -18,8 +18,8 @@ type Tile struct {
 	Position  TilePosition
 	MoveCost  MoveCost
 	Items     []int
-	Structure int // structure id, -1 if no structure
-	Plant     int // plant id, -1 if no plant
+	Structure int16 // structure id, -1 if no structure
+	Plant     int16 // plant id, -1 if no plant
 	ZoneType  ZoneType
 	ZoneIndex int8
 }
@@ -50,7 +50,7 @@ type Item struct {
 	Type       ItemType
 	Variant    int16
 	Location   ItemLocation
-	OwnedBy    int   // character id, -1 if not owned
+	OwnedBy    int8  // character id, -1 if not owned
 	Efficiency uint8 // for food it's nutrition value
 	Durability uint8
 	StackCount uint8 // some items can be stacked, e.g. seeds or materials
@@ -59,11 +59,11 @@ type Item struct {
 type ItemLocation struct {
 	LocationType ItemLocationType
 	TilePosition TilePosition
-	CharacterID  int
+	CharacterID  int8
 }
 
 type Character struct {
-	ID            int
+	ID            int8
 	Name          string
 	WorldPosition WorldPosition
 	TilePosition  TilePosition
@@ -90,9 +90,9 @@ type Player struct {
 }
 
 type Needs struct {
-	Food  int
-	Water int
-	Sleep int
+	Food  int8
+	Water int8
+	Sleep int8
 }
 
 type Task struct {
@@ -121,7 +121,7 @@ type Ambition struct {
 
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
 type Plant struct {
-	ID          int
+	ID          int16
 	Position    TilePosition
 	PlantType   PlantType
 	Variant     int16
@@ -138,10 +138,10 @@ type Production struct {
 }
 
 type Structure struct {
-	ID            int
+	ID            int16
 	Position      TilePosition
 	StructureType StructureType
 	Condition     uint8 // 0-100
-	Owner         int   // character id, -1 if not owned
+	Owner         int8  // character id, -1 if not owned
 	BuildProgress uint8 // 0-100
 }

@@ -11,7 +11,7 @@ import (
 type StructureManager struct {
 	structures []Structure
 	usedSlots  []bool
-	freeSlots  []int
+	freeSlots  []int16
 }
 
 const defaultStructureCapacity = 256
@@ -27,11 +27,11 @@ func NewStructureManager() *StructureManager {
 func (sm *StructureManager) SetCapacity(capacity int) {
 	sm.structures = make([]Structure, capacity)
 	sm.usedSlots = make([]bool, capacity)
-	sm.freeSlots = make([]int, capacity)
+	sm.freeSlots = make([]int16, capacity)
 
 	for i := 0; i < capacity; i++ {
 		// LIFO free list
-		sm.freeSlots[i] = capacity - 1 - i
+		sm.freeSlots[i] = int16(capacity - 1 - i)
 	}
 }
 
@@ -47,12 +47,12 @@ func (sm *StructureManager) growCapacity() {
 	sm.usedSlots = append(sm.usedSlots, make([]bool, newSlots)...)
 
 	for i := 0; i < newSlots; i++ {
-		sm.freeSlots = append(sm.freeSlots, current+newSlots-1-i)
+		sm.freeSlots = append(sm.freeSlots, int16(current+newSlots-1-i))
 	}
 }
 
 // AddStructure adds a structure and returns its global ID.
-func (sm *StructureManager) AddStructure(structure Structure) int {
+func (sm *StructureManager) AddStructure(structure Structure) int16 {
 	if len(sm.freeSlots) == 0 {
 		sm.growCapacity()
 	}
@@ -70,8 +70,8 @@ func (sm *StructureManager) AddStructure(structure Structure) int {
 }
 
 // RemoveStructure removes a structure at the given ID and frees the slot.
-func (sm *StructureManager) RemoveStructure(id int) {
-	if id < 0 || id >= len(sm.structures) {
+func (sm *StructureManager) RemoveStructure(id int16) {
+	if id < 0 || id >= int16(len(sm.structures)) {
 		return
 	}
 	if !sm.usedSlots[id] {
@@ -84,8 +84,8 @@ func (sm *StructureManager) RemoveStructure(id int) {
 }
 
 // GetStructure returns the structure at the given ID and a bool indicating presence.
-func (sm *StructureManager) GetStructure(id int) (Structure, bool) {
-	if id < 0 || id >= len(sm.structures) {
+func (sm *StructureManager) GetStructure(id int16) (Structure, bool) {
+	if id < 0 || id >= int16(len(sm.structures)) {
 		return Structure{}, false
 	}
 	if !sm.usedSlots[id] {
@@ -95,8 +95,8 @@ func (sm *StructureManager) GetStructure(id int) (Structure, bool) {
 }
 
 // GetStructurePtr returns a pointer to the structure at the given ID and a bool indicating presence.
-func (sm *StructureManager) GetStructurePtr(id int) (*Structure, bool) {
-	if id < 0 || id >= len(sm.structures) {
+func (sm *StructureManager) GetStructurePtr(id int16) (*Structure, bool) {
+	if id < 0 || id >= int16(len(sm.structures)) {
 		return nil, false
 	}
 	if !sm.usedSlots[id] {
@@ -106,7 +106,7 @@ func (sm *StructureManager) GetStructurePtr(id int) (*Structure, bool) {
 }
 
 // GetStructuresByOwnerAndType returns a slice of structure pointers matching the given owner ID and structure type.
-func (sm *StructureManager) GetStructuresByOwnerAndType(ownerID int, structureType StructureType) []*Structure {
+func (sm *StructureManager) GetStructuresByOwnerAndType(ownerID int8, structureType StructureType) []*Structure {
 	result := make([]*Structure, 0)
 	for id := range sm.structures {
 		if sm.usedSlots[id] {
@@ -192,7 +192,7 @@ func (sim *Sim) GetStructures() []Structure {
 }
 
 // AddStructure adds a structure to the StructureManager and registers its ID on the corresponding tile.
-func (sim *Sim) AddStructure(structure Structure) int {
+func (sim *Sim) AddStructure(structure Structure) int16 {
 	if sim.StructureManager == nil {
 		sim.StructureManager = NewStructureManager()
 	}
@@ -207,7 +207,7 @@ func (sim *Sim) AddStructure(structure Structure) int {
 }
 
 // RemoveStructure removes a structure from the StructureManager and unregisters its ID from the corresponding tile.
-func (sim *Sim) RemoveStructure(id int) {
+func (sim *Sim) RemoveStructure(id int16) {
 	if sim.StructureManager == nil {
 		return
 	}
@@ -223,7 +223,7 @@ func (sim *Sim) RemoveStructure(id int) {
 }
 
 // GetStructureByID returns a structure pointer for a given ID, or nil if not found.
-func (sim *Sim) GetStructurePtrByID(id int) *Structure {
+func (sim *Sim) GetStructurePtrByID(id int16) *Structure {
 	if sim.StructureManager == nil {
 		return nil
 	}
@@ -235,7 +235,7 @@ func (sim *Sim) GetStructurePtrByID(id int) *Structure {
 }
 
 // GetStructureByID returns a structure data for a given ID, or nil if not found.
-func (sim *Sim) GetStructureByID(id int) Structure {
+func (sim *Sim) GetStructureByID(id int16) Structure {
 	if sim.StructureManager == nil {
 		return Structure{}
 	}

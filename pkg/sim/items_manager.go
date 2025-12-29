@@ -182,7 +182,7 @@ func (im *ItemManager) GobDecode(data []byte) error {
 }
 
 // Item management convenience methods for Sim
-func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int) int {
+func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int8) int {
 	item.OwnedBy = owner
 	return s.AddItem(item, location)
 }
@@ -205,7 +205,7 @@ func (s *Sim) RemoveItem(id int) error {
 	} else if item.Location.LocationType == LocCharacter {
 		// Remove from character inventory
 		characterID := item.Location.CharacterID
-		if characterID >= 0 && characterID < len(s.Characters) {
+		if characterID >= 0 && characterID < int8(len(s.Characters)) {
 			character := &s.Characters[characterID]
 			for i, invItemID := range character.Inventory {
 				if invItemID == id {

@@ -44,7 +44,7 @@ func (sim *Sim) InitCharacters() {
 
 func (sim *Sim) MakeCharacter(name string, pos TilePosition) {
 	character := Character{
-		ID:           len(sim.Characters),
+		ID:           int8(len(sim.Characters)),
 		Name:         name,
 		TilePosition: pos,
 		WorldPosition: WorldPosition{

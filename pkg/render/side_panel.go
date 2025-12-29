@@ -16,7 +16,7 @@ func DrawSidePanel(renderer *Renderer, simData *sim.Sim) {
 		simData.UI.SelectedTileIndex < len(simData.Tiles)
 	hasCharacter := simData.UI.SelectedCharacterIndex != -1 &&
 		simData.UI.SelectedCharacterIndex >= 0 &&
-		simData.UI.SelectedCharacterIndex < len(simData.Characters)
+		simData.UI.SelectedCharacterIndex < int8(len(simData.Characters))
 	hasPlant := simData.UI.SelectedPlantIndex != -1 && simData.PlantManager != nil
 	hasStructure := simData.UI.SelectedStructureIndex != -1 && simData.StructureManager != nil
 

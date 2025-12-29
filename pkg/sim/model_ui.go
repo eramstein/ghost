@@ -30,7 +30,7 @@ type UIState struct {
 	EditorPlantVariant     int16
 	EditorStructureType    StructureType
 	SelectedTileIndex      int
-	SelectedCharacterIndex int
-	SelectedPlantIndex     int
-	SelectedStructureIndex int
+	SelectedCharacterIndex int8
+	SelectedPlantIndex     int16
+	SelectedStructureIndex int16
 }

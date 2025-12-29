@@ -11,7 +11,7 @@ import (
 type PlantManager struct {
 	plants    []Plant
 	usedSlots []bool
-	freeSlots []int
+	freeSlots []int16
 }
 
 const defaultPlantCapacity = 256
@@ -27,11 +27,11 @@ func NewPlantManager() *PlantManager {
 func (pm *PlantManager) SetCapacity(capacity int) {
 	pm.plants = make([]Plant, capacity)
 	pm.usedSlots = make([]bool, capacity)
-	pm.freeSlots = make([]int, capacity)
+	pm.freeSlots = make([]int16, capacity)
 
 	for i := 0; i < capacity; i++ {
 		// LIFO free list, like ItemManager
-		pm.freeSlots[i] = capacity - 1 - i
+		pm.freeSlots[i] = int16(capacity - 1 - i)
 	}
 }
 
@@ -47,12 +47,12 @@ func (pm *PlantManager) growCapacity() {
 	pm.usedSlots = append(pm.usedSlots, make([]bool, newSlots)...)
 
 	for i := 0; i < newSlots; i++ {
-		pm.freeSlots = append(pm.freeSlots, current+newSlots-1-i)
+		pm.freeSlots = append(pm.freeSlots, int16(current+newSlots-1-i))
 	}
 }
 
 // addPlant adds a plant and returns its global ID.
-func (pm *PlantManager) addPlant(plant Plant) int {
+func (pm *PlantManager) addPlant(plant Plant) int16 {
 	if len(pm.freeSlots) == 0 {
 		pm.growCapacity()
 	}
@@ -70,8 +70,8 @@ func (pm *PlantManager) addPlant(plant Plant) int {
 }
 
 // removePlant removes a plant at the given ID and frees the slot.
-func (pm *PlantManager) removePlant(id int) {
-	if id < 0 || id >= len(pm.plants) {
+func (pm *PlantManager) removePlant(id int16) {
+	if id < 0 || id >= int16(len(pm.plants)) {
 		return
 	}
 	if !pm.usedSlots[id] {
@@ -84,8 +84,8 @@ func (pm *PlantManager) removePlant(id int) {
 }
 
 // GetPlant returns the plant at the given ID and a bool indicating presence.
-func (pm *PlantManager) GetPlant(id int) (Plant, bool) {
-	if id < 0 || id >= len(pm.plants) {
+func (pm *PlantManager) GetPlant(id int16) (Plant, bool) {
+	if id < 0 || id >= int16(len(pm.plants)) {
 		return Plant{}, false
 	}
 	if !pm.usedSlots[id] {
@@ -95,8 +95,8 @@ func (pm *PlantManager) GetPlant(id int) (Plant, bool) {
 }
 
 // getPlantPtr returns a pointer to the plant at the given ID and a bool indicating presence.
-func (pm *PlantManager) getPlantPtr(id int) (*Plant, bool) {
-	if id < 0 || id >= len(pm.plants) {
+func (pm *PlantManager) getPlantPtr(id int16) (*Plant, bool) {
+	if id < 0 || id >= int16(len(pm.plants)) {
 		return nil, false
 	}
 	if !pm.usedSlots[id] {
@@ -180,7 +180,7 @@ func (sim *Sim) GetPlants() []Plant {
 }
 
 // GetPlantByID returns a plant pointer for a given ID, or nil if not found.
-func (sim *Sim) GetPlantByID(id int) *Plant {
+func (sim *Sim) GetPlantByID(id int16) *Plant {
 	if sim.PlantManager == nil {
 		return nil
 	}
@@ -192,7 +192,7 @@ func (sim *Sim) GetPlantByID(id int) *Plant {
 }
 
 // AddPlant adds a plant to the PlantManager and registers its ID on the corresponding tile.
-func (sim *Sim) AddPlant(plant Plant) int {
+func (sim *Sim) AddPlant(plant Plant) int16 {
 	if sim.PlantManager == nil {
 		sim.PlantManager = NewPlantManager()
 	}
@@ -207,7 +207,7 @@ func (sim *Sim) AddPlant(plant Plant) int {
 }
 
 // RemovePlant removes a plant from the PlantManager and unregisters its ID from the corresponding tile.
-func (sim *Sim) RemovePlant(id int) {
+func (sim *Sim) RemovePlant(id int16) {
 	if sim.PlantManager == nil {
 		return
 	}

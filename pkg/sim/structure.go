@@ -10,7 +10,7 @@ const (
 	Storage
 )
 
-func (sim *Sim) SpawnStructure(position TilePosition, structureType StructureType) int {
+func (sim *Sim) SpawnStructure(position TilePosition, structureType StructureType) int16 {
 	newStructure := Structure{
 		Position:      position,
 		StructureType: structureType,

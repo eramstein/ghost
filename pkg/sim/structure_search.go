@@ -9,7 +9,7 @@ import "gociv/pkg/config"
 // - structureType: pass StructureType(-1) for any
 // - variant: pass -1 for any
 // - if unclaimedOnly is true, only returns structures that are unowned (-1) or owned by characterID
-func (sim *Sim) ScanForStructure(characterID int, position TilePosition, maxDistance int, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
+func (sim *Sim) ScanForStructure(characterID int8, position TilePosition, maxDistance int, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
 	// Check current tile first
 	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
 		if s := sim.FindStructureInTile(characterID, position, structureType, variant, unclaimedOnly); s != nil {
@@ -76,7 +76,7 @@ func (sim *Sim) ScanForStructure(characterID int, position TilePosition, maxDist
 	return nil
 }
 
-func (sim *Sim) FindStructureInTile(characterID int, position TilePosition, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
+func (sim *Sim) FindStructureInTile(characterID int8, position TilePosition, structureType StructureType, variant int, unclaimedOnly bool) *Structure {
 	if sim.StructureManager == nil {
 		return nil
 	}

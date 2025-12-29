@@ -8,7 +8,7 @@ import (
 // ScanForItem searches the closest reachable item of a given type using BFS
 // Only explores passable tiles, so it respects walls and obstacles
 // if variant is irrelevant pass -1
-func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance int, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
+func (sim *Sim) ScanForItem(characterID int8, position TilePosition, maxDistance int, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
 	// Check current tile first
 	if position.X >= 0 && position.X < config.RegionSize && position.Y >= 0 && position.Y < config.RegionSize {
 		tile := sim.GetTileAt(position)
@@ -80,7 +80,7 @@ func (sim *Sim) ScanForItem(characterID int, position TilePosition, maxDistance 
 	return nil
 }
 
-func (sim *Sim) FindItemInTile(characterID int, position TilePosition, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
+func (sim *Sim) FindItemInTile(characterID int8, position TilePosition, itemType ItemType, variant int16, unclaimedOnly bool) *Item {
 	if position.X == 1 && position.Y == 1 {
 		fmt.Printf("Finding item in tile %d, %d\n", position.X, position.Y)
 	}

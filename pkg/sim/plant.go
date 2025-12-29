@@ -20,7 +20,7 @@ func (sim *Sim) UpdatePlants() {
 	})
 }
 
-func (sim *Sim) SpawnPlant(position TilePosition, variant int16, plantType PlantType) int {
+func (sim *Sim) SpawnPlant(position TilePosition, variant int16, plantType PlantType) int16 {
 	plant, _ := data.GetPlantDefinition(int(plantType), variant)
 	newPlant := Plant{
 		Variant:    variant,
@@ -57,6 +57,6 @@ func (sim *Sim) Update(plant *Plant) {
 	}
 }
 
-func (sim *Sim) RemovePlantById(id int) {
+func (sim *Sim) RemovePlantById(id int16) {
 	sim.RemovePlant(id)
 }
