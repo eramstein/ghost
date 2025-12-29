@@ -10,9 +10,9 @@ const defaultItemCapacity = 200
 
 // ItemManager manages items with memory reuse using a single slice.
 type ItemManager struct {
-	items     []Item // indexed by global item ID
-	usedSlots []bool // mirrors items slice to track occupancy
-	freeSlots []int  // stack of available indices
+	items     []Item  // indexed by global item ID
+	usedSlots []bool  // mirrors items slice to track occupancy
+	freeSlots []int32 // stack of available indices
 }
 
 // NewItemManager creates a new item manager with a default capacity.
@@ -26,11 +26,11 @@ func NewItemManager() *ItemManager {
 func (im *ItemManager) SetCapacity(capacity int) {
 	im.items = make([]Item, capacity)
 	im.usedSlots = make([]bool, capacity)
-	im.freeSlots = make([]int, capacity)
+	im.freeSlots = make([]int32, capacity)
 
 	// Initialize all slots as free (LIFO for cache-friendly reuse)
 	for i := 0; i < capacity; i++ {
-		im.freeSlots[i] = capacity - 1 - i
+		im.freeSlots[i] = int32(capacity - 1 - i)
 	}
 }
 
@@ -47,12 +47,12 @@ func (im *ItemManager) growCapacity() {
 
 	// Add new slots to the free list
 	for i := 0; i < newSlots; i++ {
-		im.freeSlots = append(im.freeSlots, current+newSlots-1-i)
+		im.freeSlots = append(im.freeSlots, int32(current+newSlots-1-i))
 	}
 }
 
 // addItem adds an item and returns its global ID.
-func (im *ItemManager) addItem(item Item, location ItemLocation) (int, error) {
+func (im *ItemManager) addItem(item Item, location ItemLocation) (int32, error) {
 	if len(im.freeSlots) == 0 {
 		im.growCapacity()
 	}
@@ -71,8 +71,8 @@ func (im *ItemManager) addItem(item Item, location ItemLocation) (int, error) {
 }
 
 // removeItem removes an item at the given ID and frees the slot.
-func (im *ItemManager) removeItem(id int) error {
-	if id < 0 || id >= len(im.items) {
+func (im *ItemManager) removeItem(id int32) error {
+	if id < 0 || id >= int32(len(im.items)) {
 		return fmt.Errorf("item id %d out of range", id)
 	}
 	if !im.usedSlots[id] {
@@ -90,13 +90,13 @@ func (im *ItemManager) removeItem(id int) error {
 }
 
 // getItem returns the item at the given ID.
-func (im *ItemManager) getItem(id int) Item {
+func (im *ItemManager) getItem(id int32) Item {
 	return im.items[id]
 }
 
 // getItemPtr returns a pointer to the item at the given ID, or nil if invalid.
-func (im *ItemManager) getItemPtr(id int) *Item {
-	if id < 0 || id >= len(im.items) {
+func (im *ItemManager) getItemPtr(id int32) *Item {
+	if id < 0 || id >= int32(len(im.items)) {
 		return nil
 	}
 	if !im.usedSlots[id] {
@@ -106,8 +106,8 @@ func (im *ItemManager) getItemPtr(id int) *Item {
 }
 
 // UpdateItemLocation updates the location of an item.
-func (im *ItemManager) UpdateItemLocation(id int, location ItemLocation) error {
-	if id < 0 || id >= len(im.items) {
+func (im *ItemManager) UpdateItemLocation(id int32, location ItemLocation) error {
+	if id < 0 || id >= int32(len(im.items)) {
 		return fmt.Errorf("item id %d out of range", id)
 	}
 	if !im.usedSlots[id] {
@@ -182,11 +182,11 @@ func (im *ItemManager) GobDecode(data []byte) error {
 }
 
 // Item management convenience methods for Sim
-func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int8) int {
+func (s *Sim) AddItemToOwner(item Item, location ItemLocation, owner int8) int32 {
 	item.OwnedBy = owner
 	return s.AddItem(item, location)
 }
-func (s *Sim) AddItem(item Item, location ItemLocation) int {
+func (s *Sim) AddItem(item Item, location ItemLocation) int32 {
 	item.OwnedBy = -1
 	index, _ := s.ItemManager.addItem(item, location)
 	if location.LocationType == LocTile {
@@ -195,7 +195,7 @@ func (s *Sim) AddItem(item Item, location ItemLocation) int {
 	}
 	return index
 }
-func (s *Sim) RemoveItem(id int) error {
+func (s *Sim) RemoveItem(id int32) error {
 	item := s.ItemManager.getItem(id)
 	fmt.Printf("Removing item %d\n", id)
 	if item.Location.LocationType == LocTile {
@@ -218,7 +218,7 @@ func (s *Sim) RemoveItem(id int) error {
 	}
 	return s.ItemManager.removeItem(id)
 }
-func (s *Sim) DecreaseItemStackCount(id int) error {
+func (s *Sim) DecreaseItemStackCount(id int32) error {
 	item := s.ItemManager.getItem(id)
 	item.StackCount--
 	if item.StackCount <= 0 {
@@ -226,10 +226,10 @@ func (s *Sim) DecreaseItemStackCount(id int) error {
 	}
 	return nil
 }
-func (s *Sim) GetItem(id int) Item {
+func (s *Sim) GetItem(id int32) Item {
 	return s.ItemManager.getItem(id)
 }
-func (s *Sim) GetItemPtr(id int) *Item {
+func (s *Sim) GetItemPtr(id int32) *Item {
 	return s.ItemManager.getItemPtr(id)
 }
 func (s *Sim) GetItems(itemType ItemType) []Item {

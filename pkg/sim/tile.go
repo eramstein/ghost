@@ -52,11 +52,11 @@ func (t *Tile) UpdateType(newType TileType) {
 	}
 }
 
-func (t *Tile) AddItem(itemID int) {
+func (t *Tile) AddItem(itemID int32) {
 	t.Items = append(t.Items, itemID)
 }
 
-func (t *Tile) RemoveItem(itemID int) {
+func (t *Tile) RemoveItem(itemID int32) {
 	fmt.Printf("Removing item %d from tile %v with items %v\n", itemID, t.Position, t.Items)
 	for i, item := range t.Items {
 		if item == itemID {

@@ -17,7 +17,7 @@ type Tile struct {
 	Type      TileType
 	Position  TilePosition
 	MoveCost  MoveCost
-	Items     []int
+	Items     []int32
 	Structure int16 // structure id, -1 if no structure
 	Plant     int16 // plant id, -1 if no plant
 	ZoneType  ZoneType
@@ -46,7 +46,7 @@ type Calendar struct {
 }
 
 type Item struct {
-	ID         int
+	ID         int32
 	Type       ItemType
 	Variant    int16
 	Location   ItemLocation
@@ -72,7 +72,7 @@ type Character struct {
 	CurrentTask   *Task
 	Objectives    []Objective
 	Ambitions     []Ambition
-	Inventory     []int // Object IDs
+	Inventory     []int32 // Object IDs
 }
 
 type WorldPosition struct {
